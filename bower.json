@@ -1,0 +1,26 @@
+{
+  "name": "airmap-auth",
+  "description": "",
+  "main": "dist/index.js",
+  "license": "Custom",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "airmap",
+    "airspace",
+    "drones",
+    "maps",
+    "uav"
+  ],
+  "ignore": [
+    "**/.*",
+    "*.log",
+    "bower_components",
+    "node_modules",
+    "src",
+    "test"
+  ]
+}

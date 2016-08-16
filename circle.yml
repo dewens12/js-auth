@@ -1,0 +1,7 @@
+machine:
+    node:
+        version: 5.7.0
+test:
+    override:
+        - mkdir -p $CIRCLE_TEST_REPORTS/mocha
+        - npm run test:circle
