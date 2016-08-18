@@ -1,26 +1,25 @@
 /**
- *  AirMap Platform Client Library - JS
- *  @module airmap-client-js
+ *  AirMap Auth0 Lock Module - JS
+ *  @module airmap-auth-js
  */
 
 
-((root, factory) => {
+(function(root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define([], factory)
+        define([], factory);
     } else if (typeof module === 'object' && module.exports) {
         // Node. Does not work with strict CommonJS, but
         // only CommonJS-like environments that support module.exports,
         // like Node.
-        module.exports = factory()
+        // module.exports = factory();
+        root.AirMapAuth = factory();
     } else {
         // Browser globals (root is window).
-        root.AirMapClient = factory(root)
+        root.AirMapAuth = factory();
     }
-})(this, () => {
+})(window, function() {
     'use strict'
-
-    const AirMapClient = require('./core')
-
-    return AirMapClient
+    const AirMapAuth = require('./core');
+    return AirMapAuth;
 })
