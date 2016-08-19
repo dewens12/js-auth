@@ -1,11 +1,7 @@
 const { expect } = require('../shared');
-const jsdom = require('jsdom');
 import AirMapAuth from '../../src/core.js';
 
 describe('AirMap Auth Tests', () => {
-
-    let doc = jsdom.jsdom(html);
-    let window = doc.parentWindow;
 
     let auth = new AirMapAuth({
         client_id: 'npKaLbyw83ArwmwhxI20rOjT5lIHERdR',

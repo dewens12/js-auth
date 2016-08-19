@@ -1,26 +1,6 @@
 import Auth0Lock from 'auth0-lock';
 import jwt from 'jsonwebtoken';
-
-const supportsLocalStorage = () => {
-    // Safari, in Private Browsing Mode, looks like it supports localStorage but all calls to setItem
-    // throw QuotaExceededError. We're going to detect this and just silently drop any calls to setItem
-    // to avoid the entire page breaking, without having to do a check at each usage of Storage.
-    // see stackoverflow.com/a/27081429
-    if (typeof localStorage === 'object') {
-        try {
-            localStorage.setItem('localStorage', 1);
-            localStorage.removeItem('localStorage');
-        }
-        catch (e) {
-            Storage.prototype._setItem = Storage.prototype.setItem;
-            Storage.prototype.setItem = function() {};
-            return false;
-        }
-        return true;
-    } else {
-        return false;
-    }
-}
+import { supportsLocalStorage, checkForEmailErrors } from './utilities.js';
 
 /** Class for handling the AirMap Auth Module */
 class AirMapAuth {
@@ -28,20 +8,22 @@ class AirMapAuth {
       * Create a new Auth Module.
       *
       * @class
-      * @param {Object} config AirMap Auth configuration settings
-      * @param {string} config.client_id - Client ID provided by AirMap
-      * @param {string} config.callback_url Callback URL provided by AirMap
-      * @param {string} config.logout_url Optional url to be redirected to after logging out. Defaults to `callback_url`
-      * @param {string} config.token_name Optional token name to be used when storing the authentication token in localStorage. Defaults to 'AirMapUserToken'
+      * @param {Object} config AirMap Auth configuration settings can be copied and pasted from the AirMap Developer Portal
+      * @param {string} config.auth0.client_id - Client ID provided by AirMap
+      * @param {string} config.auth0.callback_url Callback URL provided by AirMap
+      * @param {Object} options Optional settings for the AirMap Auth Module
+      * @param {boolean} options.closeable Optional boolean will determine if the auth window can be closed when launched. Defaults to `true`
+      * @param {boolean} options.autoLaunch Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`
       * @returns {AirMapAuth}
       */
-    constructor(config) {
+    constructor(config, options) {
         // Auth Settings - Classwide Config Variables
-        this._clientId = config.client_id;
-        this._callbackUrl = config.callback_url;
-        this._logoutUrl = config.logout_url || config.callback_url;
-        this._tokenName = config.token_name || 'AirMapUserToken';
+        this._clientId = config.auth0.client_id;
+        this._callbackUrl = config.auth0.callback_url;
+        this._tokenName = 'AirMapUserToken';
         this._domain = 'sso.airmap.io';
+        this._userId = null;
+        this._autoLaunch = options.autoLaunch ? true : false;
         this._options = {
             auth: {
                 redirectUrl: this._callbackUrl,
@@ -50,7 +32,7 @@ class AirMapAuth {
                 sso: true,
                 allowedConnections: ['Username-Password-Authentication', 'google']
                 },
-            closable: true,
+            closable: options.hasOwnProperty('closeable') ? options.closeable : true,
             theme: {
                 logo: 'https://cdn.airmap.io/img/login-logo.png',
                 primaryColor: '#87dadf'
@@ -59,22 +41,26 @@ class AirMapAuth {
             socialButtonStyle: 'big',
             languageDictionary: {
                 emailInputPlaceholder: 'email@emailprovider.com',
-                title: 'Log In | Sign Up'
+                title: ''
             },
             avatar: null
         };
 
+        // Creates an instance of Auth0Lock and then initiates Event Emitters
+        this._lock = new Auth0Lock(this._clientId, this._domain, this._options);
+        this._initAuth();
+    }
+
+    _initAuth() {
+        // Checks localStorage browser support
         if (!supportsLocalStorage()) {
             alert('Your web browser does not support storing settings locally. In Safari, the most common cause of this is using "Private Browsing Mode". Please try exiting Private Browsing Mode and logging in again, or using another browser.');
         }
-
-        // Creates an instance of Auth0Lock
-        this._lock = new Auth0Lock(this._clientId, this._domain, this._options);
-
         // Auth0 Lock Event Emitters
         // Listens to 'authenticated' which is emitted when a user logs in and emmediately stores a token into localStorage.
         this._lock.on('authenticated', (authResult) => {
             localStorage.setItem(this._tokenName, authResult.idToken);
+            this._userId = authResult.idTokenPayload.sub;
         });
         // Listens to 'unrecoverable_error' which is emitted when there is an unrecoverable error, for instance when no connection is available.
         this._lock.on('unrecoverable_error', (error) => {
@@ -82,10 +68,27 @@ class AirMapAuth {
         });
         // Listens to 'authorization_error' which is emitted when authorization fails. Calls logout without a redirect and launches an Auth Modal.
         this._lock.on('authorization_error', (error) => {
+            this.logout();
+            this._lock.show();
             console.warn(error);
-            this.logout(false);
-            this.showAuth();
+            checkForEmailErrors(error);
         });
+        window.onload = () => {
+            if (this._autoLaunch) {
+                this._loaded();
+            }
+        }
+    }
+
+    _loaded() {
+        //Will only show Auth Modal when user does not have an auth token available.
+        let token = localStorage.getItem(this._tokenName) || null;
+        let authenticated = this.isAuthenticated();
+        if (token && !authenticated) {
+            this._lock.show();
+        } else {
+            return;
+        }
     }
 
     /**
@@ -120,48 +123,44 @@ class AirMapAuth {
     }
 
     /**
-     *  Retreives a user's profile when authenticated. If no auth token exists, user will be shown the Auth Modal and no profile will be provided.
-     *  If Auth0 (authentication provider) denies authentication, an error message will be shown and no profile will be provided.
+     *  Retreives a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.
      *  @public
-     *  @return {Promise} resolves with the user's profile (if authenticated), rejected with error if profile could not be retrieved by Auth0, or authentication failure message.
+     *  @return {string} returns the user's id (if authenticated), null if profile could not be retrieved.
      */
-    getProfile() {
-        // Looks for a token in localStorage and makres sure the token is valid.
+    getUserId() {
+        // Looks for a token in localStorage and makes sure the token is valid.
         let token = localStorage.getItem(this._tokenName) || null;
         let authenticated = this.isAuthenticated();
-        // Requesting for a user's profile is asynchronous so we return a promise that resolves to the profile data,
-        // the error if there's an issue, or if the user is not authenticated, we load the Auth Modal and reject with a message.
-        return new Promise((resolve, reject) => {
-            if (!token && !authenticated) {
-                this.showAuth();
-                reject('User not logged in.');
-            } else {
-                // Requesting the user's profile and sends back the profile or error, if issue occured.
-                return this._lock.getProfile(token, function (error, profile) {
-                    if (error) {
-                        let loggedError = 'Unable to retrieve profile. ' + error;
-                        reject(loggedError);
-                    } else {
-                        resolve(profile);
-                    }
-                });
-            }
-        })
+        if (!token && !authenticated) {
+            return null;
+        } else {
+            return jwt.decode(localStorage.getItem(this._tokenName)).sub;
+        }
+    }
+
+    /**
+     *  Retreives a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.
+     *  @public
+     *  @return {string} returns the user's id (if authenticated), null if profile could not be retrieved.
+     */
+    getUserToken() {
+        // Looks for a token in localStorage and makes sure the token is valid.
+        return localStorage.getItem(this._tokenName) || null;
     }
 
     /**
      *  Logs out a user by removing the authenticated user token from localStorage and redirects the user (optional).
      *  @public
-     *  @param {boolean} Redirect - If `true`, upon logging out, page will be redirected to the provided `logout_url`.
+     *  @param {boolean} redirect - If `true`, upon logging out, page will be redirected to the provided `logout_url`.
      *  If no logout_url was provided in the config settings, user will be redirected to the backup callback_url.
      *  If `false`, page will not be redirected.
      */
-    logout(redirect = false) {
-        let token = localStorage.getItem(this._tokenName);
-        if (!token) return;
-        if (redirect) {
+    logout(logoutUrl = null) {
+        console.log(logoutUrl)
+        if (!this.isAuthenticated()) return;
+        if (logoutUrl) {
             localStorage.removeItem(this._tokenName);
-            window.location.href = this._logoutUrl;
+            window.location.href = logoutUrl;
             return;
         } else {
             localStorage.removeItem(this._tokenName);

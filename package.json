@@ -27,7 +27,7 @@
     "docs": "node_modules/.bin/jsdoc2md src/** > API.md",
     "prepublish": "npm run build-prod",
     "release": "sh ./scripts/release.sh",
-    "test": "node_modules/.bin/mocha --recursive test/setup.js test/unit/*",
+    "test": "mocha --compilers js:babel-register --recursive test/setup.js test/unit/*",
     "test:circle": "npm run env-test && node_modules/.bin/mocha --recursive --reporter mocha-junit-reporter test/setup.js test/unit/* --reporter-options mochaFile=$CIRCLE_TEST_REPORTS/mocha/unit.xml",
     "start": "budo ./src/index.js --serve=examples/bundle.js --port=8080 --live -ssl --cors --dir=examples -- -t babelify"
   },
@@ -40,6 +40,7 @@
     "babel-plugin-transform-object-assign": "^6.8.0",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-preset-es2015": "^6.13.2",
+    "babel-register": "^6.11.6",
     "babelify": "^7.3.0",
     "browserify": "^13.1.0",
     "budo": "^7.0.2",
