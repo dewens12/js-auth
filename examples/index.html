@@ -59,8 +59,8 @@
         // config is an object provided to the the AirMapAuth constructor
         // client_id: from the AirMap Developer Portal (https://dashboard.airmap.io/developer)
         // callback_url: your callback url needs to be saved on the AirMap Developer Portal (https://dashboard.airmap.io/developer)
-        // logout_url: Optional url to be redirected to after logging out. Defaults to `callback_url`
-        // token_name: Optional token name to be used when storing the authentication token in localStorage. Defaults to 'AirMapUserToken'
+        // closeable: Optional boolean will determine if the auth window can be closed when launched. Defaults to `true`
+        // autoLaunch: Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`
         var config = {
             // config settings from AirMap Developer Dashboard
         };

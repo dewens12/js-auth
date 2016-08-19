@@ -25,11 +25,9 @@ const checkForEmailErrors = (authResult) => {
         let error_description = JSON.parse(authResult.error_description);
         switch (error_description.type) {
             case 'email_verification':
-                openEmailVerificationError(error_description.resend_link);
-                break;
+                return openEmailVerificationError(error_description.resend_link);
             case 'domain_blacklist':
-                openDomainBlacklistError();
-                break;
+                return openDomainBlacklistError();
             default:
                 break;
         }
@@ -38,19 +36,19 @@ const checkForEmailErrors = (authResult) => {
 
 const openDomainBlacklistError = () => {
     const warning = `Sorry, we are unable to create an account for this email address. Please register with an address from another domain.`;
-    insertErrorMsg(warning);
+    return insertErrorMsg(warning);
 }
 
 const openEmailVerificationError = (resendLink) => {
     const warning = `Your email address has not been verified yet. Please check the link that was emailed to you, or <a href="${resendLink}">click here</a> to resend the link.`;
-    insertErrorMsg(warning);
+    return insertErrorMsg(warning);
 }
 
 const insertErrorMsg = (message) => {
     let node = document.createElement('p');
     node.innerHTML = message;
     setTimeout(() => {
-        document.getElementsByClassName('auth0-lock-header')[0].insertAdjacentHTML('afterend', `<p style="text-align: center; padding: 8px 8px 0px 8px;">${message}</p>`);
+         return document.getElementsByClassName('auth0-lock-header')[0].insertAdjacentHTML('afterend', `<p style="text-align: center; padding: 8px 8px 0px 8px;">${message}</p>`);
     }, 1500);
 }
 

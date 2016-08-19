@@ -54,7 +54,7 @@ class AirMapAuth {
     _initAuth() {
         // Checks localStorage browser support
         if (!supportsLocalStorage()) {
-            alert('Your web browser does not support storing settings locally. In Safari, the most common cause of this is using "Private Browsing Mode". Please try exiting Private Browsing Mode and logging in again, or using another browser.');
+            window.alert('Your web browser does not support storing settings locally. In Safari, the most common cause of this is using "Private Browsing Mode". Please try exiting Private Browsing Mode and logging in again, or using another browser.');
         }
         // Auth0 Lock Event Emitters
         // Listens to 'authenticated' which is emitted when a user logs in and emmediately stores a token into localStorage.
@@ -84,10 +84,10 @@ class AirMapAuth {
         //Will only show Auth Modal when user does not have an auth token available.
         let token = localStorage.getItem(this._tokenName) || null;
         let authenticated = this.isAuthenticated();
-        if (token && !authenticated) {
-            this._lock.show();
-        } else {
+        if (token && authenticated) {
             return;
+        } else {
+            this._lock.show();
         }
     }
 
@@ -156,7 +156,6 @@ class AirMapAuth {
      *  If `false`, page will not be redirected.
      */
     logout(logoutUrl = null) {
-        console.log(logoutUrl)
         if (!this.isAuthenticated()) return;
         if (logoutUrl) {
             localStorage.removeItem(this._tokenName);
