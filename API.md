@@ -1,4 +1,22 @@
-## airmap-auth-js
+## Modules
+
+<dl>
+<dt><a href="#module_airmap-auth">airmap-auth</a></dt>
+<dd><p>AirMap Auth0 Lock Module - JS</p>
+</dd>
+</dl>
+
+## Classes
+
+<dl>
+<dt><a href="#AirMapAuth">AirMapAuth</a></dt>
+<dd><p>Class for handling the AirMap Auth Module</p>
+</dd>
+</dl>
+
+<a name="module_airmap-auth"></a>
+
+## airmap-auth
 AirMap Auth0 Lock Module - JS
 
 <a name="AirMapAuth"></a>
@@ -14,7 +32,7 @@ Class for handling the AirMap Auth Module
     * [.isAuthenticated()](#AirMapAuth+isAuthenticated) ⇒ <code>boolean</code>
     * [.getUserId()](#AirMapAuth+getUserId) ⇒ <code>string</code>
     * [.getUserToken()](#AirMapAuth+getUserToken) ⇒ <code>string</code>
-    * [.logout(redirect)](#AirMapAuth+logout)
+    * [.logout(logoutUrl)](#AirMapAuth+logout)
 
 <a name="new_AirMapAuth_new"></a>
 
@@ -51,6 +69,7 @@ Checks whether a user is authenticated, which means that they have a token store
 
 ### airMapAuth.getUserId() ⇒ <code>string</code>
 Retreives a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.
+ This method can be used to retrieve the user's AirMap Id for calls to other AirMap APIs like the Pilot API, which returns a Pilot's profile.
 
 **Kind**: instance method of <code>[AirMapAuth](#AirMapAuth)</code>  
 **Returns**: <code>string</code> - returns the user's id (if authenticated), null if profile could not be retrieved.  
@@ -61,16 +80,17 @@ Retreives a user's id when authenticated. If no auth token exists or if it's inv
 Retreives a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.
 
 **Kind**: instance method of <code>[AirMapAuth](#AirMapAuth)</code>  
-**Returns**: <code>string</code> - returns the user's id (if authenticated), null if profile could not be retrieved.  
+**Returns**: <code>string</code> - returns the user's token (if authenticated), null if user is not authenticated (active session).  
 **Access:** public  
 <a name="AirMapAuth+logout"></a>
 
-### airMapAuth.logout(redirect)
+### airMapAuth.logout(logoutUrl)
 Logs out a user by removing the authenticated user token from localStorage and redirects the user (optional).
 
 **Kind**: instance method of <code>[AirMapAuth](#AirMapAuth)</code>  
 **Access:** public  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| redirect | <code>boolean</code> | If `true`, upon logging out, page will be redirected to the provided `logout_url`.  If no logout_url was provided in the config settings, user will be redirected to the backup callback_url.  If `false`, page will not be redirected. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| logoutUrl | <code>string</code> | <code>null</code> | If a logout url is provided as a parameter, upon logging out, page will be redirected to the provided url, otherwise no redirect. |
+
