@@ -1,5 +1,5 @@
 const { expect } = require('../shared');
-import AirMapAuth from '../../src/core.js';
+const AirMapAuth = require('../../src/core.js');
 
 describe('AirMap Auth Tests', () => {
     let config = {

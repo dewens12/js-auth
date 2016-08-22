@@ -1,6 +1,6 @@
-import Auth0Lock from 'auth0-lock';
-import jwt from 'jsonwebtoken';
-import { supportsLocalStorage, checkForEmailErrors } from './utilities.js';
+const Auth0Lock = require('auth0-lock').default;
+const jwt = require('jsonwebtoken');
+const { supportsLocalStorage, checkForEmailErrors } = require('./utilities.js');
 
 /** Class for handling the AirMap Auth Module */
 class AirMapAuth {
@@ -57,7 +57,7 @@ class AirMapAuth {
             window.alert('Your web browser does not support storing settings locally. In Safari, the most common cause of this is using "Private Browsing Mode". Please try exiting Private Browsing Mode and logging in again, or using another browser.');
         }
         // Auth0 Lock Event Emitters
-        // Listens to 'authenticated' which is emitted when a user logs in and emmediately stores a token into localStorage.
+        // Listens to the 'authenticated' event which is emitted when a user logs in and emmediately stores a token into localStorage.
         this._lock.on('authenticated', (authResult) => {
             localStorage.setItem(this._tokenName, authResult.idToken);
             this._userId = authResult.idTokenPayload.sub;
@@ -66,28 +66,18 @@ class AirMapAuth {
         this._lock.on('unrecoverable_error', (error) => {
             console.warn(error);
         });
-        // Listens to 'authorization_error' which is emitted when authorization fails. Calls logout without a redirect and launches an Auth Modal.
+        // Listens to 'authorization_error' which is emitted when authorization fails. Calls logout without a redirect, launches an Auth Modal, and parses error for user.
         this._lock.on('authorization_error', (error) => {
             this.logout();
             this._lock.show();
             console.warn(error);
             checkForEmailErrors(error);
         });
-        window.onload = () => {
-            if (this._autoLaunch) {
-                this._loaded();
-            }
-        }
-    }
-
-    _loaded() {
-        //Will only show Auth Modal when user does not have an auth token available.
-        let token = localStorage.getItem(this._tokenName) || null;
-        let authenticated = this.isAuthenticated();
-        if (token && authenticated) {
-            return;
-        } else {
-            this._lock.show();
+        // Attaching event listener for DOM load when autoLaunch is desired so that an authenticated check is made.
+        if (this._autoLaunch) {
+            document.addEventListener("DOMContentLoaded", () => {
+                this.showAuth();
+            });
         }
     }
 
@@ -97,12 +87,13 @@ class AirMapAuth {
      *  @return none.
      */
     showAuth() {
-        //Will only show Auth Modal when user does not have an auth token available.
-        let token = localStorage.getItem(this._tokenName) || null;
+        //Will only show Auth Modal when user does not have a valid auth token available.
+        // Also, handling race conditions by checking hash for id_token as a redirect (causing DOM loading) fires before 'authenticated' event.
         let authenticated = this.isAuthenticated();
-        if (!token && !authenticated) {
-            this._lock.show();
+        if (authenticated || window.location.hash.indexOf('id_token') > -1) {
+            return;
         } else {
+            this._lock.show();
             return;
         }
     }
@@ -115,7 +106,6 @@ class AirMapAuth {
     isAuthenticated() {
         // Will only show Auth Modal when user does not have an auth token available.
         if (!localStorage.getItem(this._tokenName)) return false;
-
         //Checks expiration date of token.
         const decoded = jwt.decode(localStorage.getItem(this._tokenName));
         const timeStampNow = Math.floor(Date.now() / 1000);
@@ -124,14 +114,14 @@ class AirMapAuth {
 
     /**
      *  Retreives a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.
+     *  This method can be used to retrieve the user's AirMap Id for calls to other AirMap APIs like the Pilot API, which returns a Pilot's profile.
      *  @public
      *  @return {string} returns the user's id (if authenticated), null if profile could not be retrieved.
      */
     getUserId() {
-        // Looks for a token in localStorage and makes sure the token is valid.
-        let token = localStorage.getItem(this._tokenName) || null;
+        // Looks for a valid token in localStorage.
         let authenticated = this.isAuthenticated();
-        if (!token && !authenticated) {
+        if (!authenticated) {
             return null;
         } else {
             return jwt.decode(localStorage.getItem(this._tokenName)).sub;
@@ -141,7 +131,7 @@ class AirMapAuth {
     /**
      *  Retreives a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.
      *  @public
-     *  @return {string} returns the user's id (if authenticated), null if profile could not be retrieved.
+     *  @return {string} returns the user's token (if authenticated), null if user is not authenticated (active session).
      */
     getUserToken() {
         // Looks for a token in localStorage and makes sure the token is valid.
@@ -151,9 +141,7 @@ class AirMapAuth {
     /**
      *  Logs out a user by removing the authenticated user token from localStorage and redirects the user (optional).
      *  @public
-     *  @param {boolean} redirect - If `true`, upon logging out, page will be redirected to the provided `logout_url`.
-     *  If no logout_url was provided in the config settings, user will be redirected to the backup callback_url.
-     *  If `false`, page will not be redirected.
+     *  @param {string} logoutUrl - If a logout url is provided as a parameter, upon logging out, page will be redirected to the provided url, otherwise no redirect.
      */
     logout(logoutUrl = null) {
         if (!this.isAuthenticated()) return;
@@ -166,7 +154,5 @@ class AirMapAuth {
             return;
         }
     }
-
 }
-
-module.exports = AirMapAuth
+module.exports = AirMapAuth;

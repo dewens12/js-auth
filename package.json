@@ -22,7 +22,7 @@
     ]
   },
   "scripts": {
-    "build-prod": "browserify -t [babelify] src/index.js -s AirMapAuth | uglifyjs -c -m > dist/airmap-auth-min.js",
+    "build-prod": "browserify -t [babelify] src/index.js -s AirMapAuth | uglifyjs -c -m > dist/airmap-auth.min.js",
     "build-dev": "browserify -t [babelify] src/index.js -s AirMapAuth > dist/index.js",
     "docs": "node_modules/.bin/jsdoc2md src/** > API.md",
     "prepublish": "npm run build-prod",
