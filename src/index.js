@@ -1,6 +1,6 @@
 /**
  *  AirMap Auth0 Lock Module - JS
- *  @module airmap-auth-js
+ *  @module airmap-auth
  */
 
 (function(root, factory) {
