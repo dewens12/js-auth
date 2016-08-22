@@ -28,11 +28,11 @@ Class for handling the AirMap Auth Module
 
 * [AirMapAuth](#AirMapAuth)
     * [new AirMapAuth(config, options)](#new_AirMapAuth_new)
-    * [.showAuth()](#AirMapAuth+showAuth) ⇒
+    * [.showAuth()](#AirMapAuth+showAuth) ⇒ <code>void</code>
     * [.isAuthenticated()](#AirMapAuth+isAuthenticated) ⇒ <code>boolean</code>
     * [.getUserId()](#AirMapAuth+getUserId) ⇒ <code>string</code>
     * [.getUserToken()](#AirMapAuth+getUserToken) ⇒ <code>string</code>
-    * [.logout(logoutUrl)](#AirMapAuth+logout)
+    * [.logout(logoutUrl)](#AirMapAuth+logout) ⇒ <code>void</code>
 
 <a name="new_AirMapAuth_new"></a>
 
@@ -48,14 +48,15 @@ Create a new Auth Module.
 | options | <code>Object</code> | Optional settings for the AirMap Auth Module |
 | options.closeable | <code>boolean</code> | Optional boolean will determine if the auth window can be closed when launched. Defaults to `true` |
 | options.autoLaunch | <code>boolean</code> | Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false` |
+| options.onAuthenticated | <code>function</code> | Optional function. Function called when Auth Module successfully authenticates the user. Parameter passed to function is the resulting Authorization object |
+| options.onAuthorizationError | <code>function</code> | Optional function. Function called when there is an error in authentication. Parameter passed to function is the resulting error object |
 
 <a name="AirMapAuth+showAuth"></a>
 
-### airMapAuth.showAuth() ⇒
+### airMapAuth.showAuth() ⇒ <code>void</code>
 Launches the Auth Modal after checking if a valid auth token is available.
 
 **Kind**: instance method of <code>[AirMapAuth](#AirMapAuth)</code>  
-**Returns**: none.  
 **Access:** public  
 <a name="AirMapAuth+isAuthenticated"></a>
 
@@ -84,7 +85,7 @@ Retreives a user's id when authenticated. If no auth token exists or if it's inv
 **Access:** public  
 <a name="AirMapAuth+logout"></a>
 
-### airMapAuth.logout(logoutUrl)
+### airMapAuth.logout(logoutUrl) ⇒ <code>void</code>
 Logs out a user by removing the authenticated user token from localStorage and redirects the user (optional).
 
 **Kind**: instance method of <code>[AirMapAuth](#AirMapAuth)</code>  
