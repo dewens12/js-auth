@@ -1,6 +1,6 @@
 {
   "name": "airmap-auth",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Authenticate users with AirMap",
   "author": "AirMap, Inc. <developers@airmap.com> (https://airmap.com)",
   "license": "SEE LICENSE IN LICENSE.md",
@@ -26,6 +26,7 @@
     "build-dev": "browserify -t [babelify] src/index.js -s AirMapAuth > dist/index.js",
     "docs": "node_modules/.bin/jsdoc2md src/** > API.md",
     "prepublish": "npm run build-prod",
+    "standard-version": "standard-version",
     "release": "sh ./scripts/release.sh",
     "test": "mocha --compilers js:babel-register --recursive test/setup.js test/unit/*",
     "test:circle": "npm run env-test && node_modules/.bin/mocha --recursive --reporter mocha-junit-reporter test/setup.js test/unit/* --reporter-options mochaFile=$CIRCLE_TEST_REPORTS/mocha/unit.xml",
