@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>js-auth Example</title>
+    <link rel="stylesheet" href="https://cdn.airmap.io/www-ui/latest/ui.min.css">
+    <script src="examples/bundle.js"></script>
+    <style>
+        .header {
+            font-size: 1em;
+        }
+
+        p {
+            font-size: .8em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ui raised very padded text container center aligned segment">
+        <img class="ui centered image" src="https://www.airmap.com/wp-content/themes/airmap/images/airmap_logo_dark.svg"></img>
+        <h3 class="ui centered orange header">AirMap's js-auth Module Example</h3>
+        <div class="ui divider"></div>
+        <button id="login-btn" class="ui button" onclick="login()">Login</button>
+        <div class="ui header orange">
+            <code>showAuth()</code>
+        </div>
+        <p>Launches the Auth Modal when no valid access token is available.</p>
+        <div class="ui divider"></div>
+        <button id="logout-btn" class="ui button" onclick="logout()">Logout</button>
+        <div class="ui header orange">
+            <code>logout(redirectUrl)</code>
+        </div>
+        <p>Logs out a user by removing the authenticated user token from localStorage and redirects the user (optional).</p>
+        <div class="ui divider"></div>
+        <button id="profile-btn" class="ui button" onclick="getUserId()">Get User Id</button>
+        <div class="ui header orange">
+            <code>getUserId()</code>
+        </div>
+        <p>Retreives a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.</p>
+        <div class="ui divider"></div>
+        <button id="profile-btn" class="ui button" onclick="getUserToken()">Get User Token</button>
+        <div class="ui header orange">
+            <code>getUserToken()</code>
+        </div>
+        <p>Retreives a user's token when one exists.</p>
+        <div class="ui divider"></div>
+        <button id="profile-btn" class="ui button" onclick="isAuthenticated()">Is User Authenticated ?</button>
+        <div class="ui header orange">
+            <code>isAuthenticated()</code>
+        </div>
+        <p>Checks whether a user is authenticated, which means that they have a token and that the token is not expired.</p>
+        <div class="ui divider"></div>
+        <p>Visit <a href="https://github.com/airmap/js-auth">GitHub</a> for more information including Documentation.</p>
+    </div>
+    <script type="text/javascript">
+        // Set up the config and options objects
+        // config is an object provided to the the AirMapAuth constructor
+        // client_id: from the AirMap Developer Portal (https://dashboard.airmap.io/developer)
+        // callback_url: your callback url needs to be saved on the AirMap Developer Portal (https://dashboard.airmap.io/developer)
+        // closeable: Optional boolean will determine if the auth window can be closed when launched. Defaults to `true`
+        // autoLaunch: Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`
+        var config = {
+            // config settings from AirMap Developer Dashboard
+        };
+        // Additional options for AirMap Auth Module
+        var options = {
+            closeable: true,
+            autoLaunch: false
+        };
+
+        // Create an instance of AirMapAuth and provide it with some configuration settings
+        var auth = new AirMapAuth(config, options);
+
+        // Calls the 'showAuth' method which launches the Auth Modal
+        function login() {
+            auth.showAuth();
+        }
+
+        // Calls the 'logout' method which destroys a user's authenticated session
+        function logout() {
+            auth.logout('http://localhost:8080/logout-redirect.html');
+        }
+
+        // Calls the 'isAuthenticated' method which checks if a user's session is authenticated
+        function isAuthenticated() {
+            console.log(auth.isAuthenticated());
+        }
+
+        // Calls the 'getUserId' method which retrieves a user's profile (if authenticated)
+        function getUserId() {
+            var userId = auth.getUserId();
+            console.log(userId);
+        }
+
+        // Calls the 'getUserToken' method which retrieves a user's token if one exists
+        function getUserToken() {
+            var userToken = auth.getUserToken();
+            console.log(userToken);
+        }
+    </script>
+</body>
+
+</html>
