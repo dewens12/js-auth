@@ -1,6 +1,6 @@
 # AirMap Auth
 
-[![Version](https://img.shields.io/npm/v/airmap-auth?style=flat)](https://www.npmjs.com/package/airmap-auth) [![License](https://img.shields.io/npm/l/airmap-auth?style=flat)](LICENSE.md)
+[![npm version](https://badge.fury.io/js/airmap-auth.svg)](https://badge.fury.io/js/airmap-auth) 
 
 Authenticate users with AirMap.
 
@@ -50,7 +50,7 @@ After installing the `airmap-auth` module, you'll need bundle it up along with a
 
 ## Demo
 
-Clone the repo and run `npm install`. Open the 'index.html' file in the 'examples' folder and add the config object from the AirMap Developer Portal. Then, run `npm start` in the command line and navigate to http://localhost:8080/.
+[Clone the repo](https://github.com/airmap/js-auth) and run `npm install`. Open the 'index.html' file in the 'examples' folder and add the config object from the AirMap Developer Portal. Then, run `npm start` in the command line and navigate to http://localhost:8080/.
 
 > Note: When testing the module with the provided examples, you'll want to update the `callback_url` with http://localhost:8080/ in the following two places:
 
