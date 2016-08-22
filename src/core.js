@@ -14,16 +14,20 @@ class AirMapAuth {
       * @param {Object} options Optional settings for the AirMap Auth Module
       * @param {boolean} options.closeable Optional boolean will determine if the auth window can be closed when launched. Defaults to `true`
       * @param {boolean} options.autoLaunch Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`
+      * @param {function} options.onAuthenticated Optional function. Function called when Auth Module successfully authenticates the user. Parameter passed to function is the resulting Authorization object
+      * @param {function} options.onAuthorizationError Optional function. Function called when there is an error in authentication. Parameter passed to function is the resulting error object
       * @returns {AirMapAuth}
       */
-    constructor(config, options) {
+    constructor(config, options = null) {
         // Auth Settings - Classwide Config Variables
         this._clientId = config.auth0.client_id;
         this._callbackUrl = config.auth0.callback_url;
         this._tokenName = 'AirMapUserToken';
         this._domain = 'sso.airmap.io';
         this._userId = null;
-        this._autoLaunch = options.autoLaunch ? true : false;
+        this._autoLaunch = options && options.hasOwnProperty('autoLaunch') ? options.autoLaunch : false;
+        this._onAuthenticated = options && options.hasOwnProperty('onAuthenticated') ? options.onAuthenticated : null;
+        this._onAuthorizationError = options && options.hasOwnProperty('onAuthorizationError') ? options.onAuthorizationError : null;
         this._options = {
             auth: {
                 redirectUrl: this._callbackUrl,
@@ -32,7 +36,7 @@ class AirMapAuth {
                 sso: true,
                 allowedConnections: ['Username-Password-Authentication', 'google']
                 },
-            closable: options.hasOwnProperty('closeable') ? options.closeable : true,
+            closable: options && options.hasOwnProperty('closeable') ? options.closeable : true,
             theme: {
                 logo: 'https://cdn.airmap.io/img/login-logo.png',
                 primaryColor: '#87dadf'
@@ -61,6 +65,7 @@ class AirMapAuth {
         this._lock.on('authenticated', (authResult) => {
             localStorage.setItem(this._tokenName, authResult.idToken);
             this._userId = authResult.idTokenPayload.sub;
+            this._onAuthenticated(authResult);
         });
         // Listens to 'unrecoverable_error' which is emitted when there is an unrecoverable error, for instance when no connection is available.
         this._lock.on('unrecoverable_error', (error) => {
@@ -69,6 +74,7 @@ class AirMapAuth {
         // Listens to 'authorization_error' which is emitted when authorization fails. Calls logout without a redirect, launches an Auth Modal, and parses error for user.
         this._lock.on('authorization_error', (error) => {
             this.logout();
+            this._onAuthorizationError(error);
             this._lock.show();
             console.warn(error);
             checkForEmailErrors(error);
@@ -84,7 +90,7 @@ class AirMapAuth {
     /**
      *  Launches the Auth Modal after checking if a valid auth token is available.
      *  @public
-     *  @return none.
+     *  @return {void}
      */
     showAuth() {
         //Will only show Auth Modal when user does not have a valid auth token available.
@@ -142,6 +148,7 @@ class AirMapAuth {
      *  Logs out a user by removing the authenticated user token from localStorage and redirects the user (optional).
      *  @public
      *  @param {string} logoutUrl - If a logout url is provided as a parameter, upon logging out, page will be redirected to the provided url, otherwise no redirect.
+     *  @return {void}
      */
     logout(logoutUrl = null) {
         if (!this.isAuthenticated()) return;

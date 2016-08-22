@@ -59,15 +59,19 @@
         // config is an object provided to the the AirMapAuth constructor
         // client_id: from the AirMap Developer Portal (https://dashboard.airmap.io/developer)
         // callback_url: your callback url needs to be saved on the AirMap Developer Portal (https://dashboard.airmap.io/developer)
-        // closeable: Optional boolean will determine if the auth window can be closed when launched. Defaults to `true`
-        // autoLaunch: Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`
         var config = {
             // config settings from AirMap Developer Dashboard
         };
+        // closeable: Optional boolean will determine if the auth window can be closed when launched. Defaults to `true`
+        // autoLaunch: Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`
+        // onAuthenticated: Optional function. Function called when Auth Module successfully authenticates the user. Parameter passed to function is the resulting Authorization object
+        // onAuthorizationError: Optional function. Function called when there is an error in authentication. Parameter passed to function is the resulting error object
         // Additional options for AirMap Auth Module
         var options = {
             closeable: true,
-            autoLaunch: false
+            autoLaunch: false,
+            onAuthenticated: (authResult) => {console.log('onAuthenticated', authResult)},
+            onAuthorizationError: (error) => {console.log('onAuthorizationError', error)}
         };
 
         // Create an instance of AirMapAuth and provide it with some configuration settings

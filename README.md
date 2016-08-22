@@ -18,10 +18,10 @@ From CDN
 
 ```html
 <!-- Latest patch release -->
-<script src="https://cdn.airmap.io/js/auth/1.0.0/index.min.js"></script>
+<script src="https://cdn.airmap.io/js/auth/1.2.0/airmap-auth.min.js"></script>
 
 <!-- Latest minor release -->
-<script src="https://cdn.airmap.io/js/auth/v1.0/index.min.js"></script>
+<script src="https://cdn.airmap.io/js/auth/v1.2/index.min.js"></script>
 ```
 
 From [bower](http://bower.io)
