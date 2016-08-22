@@ -1,6 +1,6 @@
 # AirMap Auth
 
-[![npm version](https://badge.fury.io/js/airmap-auth.svg)](https://badge.fury.io/js/airmap-auth) 
+[![npm version](https://badge.fury.io/js/airmap-auth.svg)](https://badge.fury.io/js/airmap-auth)
 
 Authenticate users with AirMap.
 
