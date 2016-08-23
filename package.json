@@ -1,6 +1,6 @@
 {
   "name": "airmap-auth",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Authenticate users with AirMap",
   "author": "AirMap, Inc. <developers@airmap.com> (https://airmap.com)",
   "license": "SEE LICENSE IN LICENSE.md",
@@ -23,7 +23,7 @@
   },
   "scripts": {
     "build-prod-cdn": "browserify -t [babelify] src/index.js -s AirMapAuth | uglifyjs -c -m > dist/airmap-auth.min.js",
-    "build-prod-npm": "browserify -t [babelify] src/index.js -s AirMapAuth > dist/index.js",
+    "build-prod-npm": "browserify -t [babelify] src/index.js -s AirMapAuth | uglifyjs -c -m > dist/index.js",
     "build-prod": "npm run build-prod-cdn && npm run build-prod-npm",
     "build-dev": "browserify -t [babelify] src/index.js -s AirMapAuth > dist/index.js",
     "docs": "node_modules/.bin/jsdoc2md src/** > API.md",

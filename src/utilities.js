@@ -25,9 +25,9 @@ const checkForEmailErrors = (authResult) => {
         let error_description = JSON.parse(authResult.error_description);
         switch (error_description.type) {
             case 'email_verification':
-                return openEmailVerificationError(error_description.resend_link);
+                openEmailVerificationError(error_description.resend_link);
             case 'domain_blacklist':
-                return openDomainBlacklistError();
+                openDomainBlacklistError();
             default:
                 break;
         }
@@ -40,8 +40,12 @@ const openDomainBlacklistError = () => {
 }
 
 const openEmailVerificationError = (resendLink) => {
-    const warning = `Your email address has not been verified yet. Please check the link that was emailed to you, or <a href="${resendLink}">click here</a> to resend the link.`;
-    return insertErrorMsg(warning);
+    if (validateLink(resendLink)) {
+        const warning = `Your email address has not been verified yet. Please check the link that was emailed to you, or <a href="${resendLink}">click here</a> to resend the link.`;
+        insertErrorMsg(warning);
+    } else {
+        insertErrorMsg('Your email address has not been verified yet. Please check the link that was emailed to you.');
+    }
 }
 
 const insertErrorMsg = (message) => {
@@ -50,6 +54,11 @@ const insertErrorMsg = (message) => {
     setTimeout(() => {
          return document.getElementsByClassName('auth0-lock-header')[0].insertAdjacentHTML('afterend', `<p style="text-align: center; padding: 8px 8px 0px 8px;">${message}</p>`);
     }, 1500);
+}
+
+const validateLink = (str) => {
+    let regex = /https?:\/\/api.airmap\.io(\/[A-Za-z0-9\-\._~:\/\?#\[\]@!$&'\(\)\*\+,;\=]*)?/;
+    return !!str.match(regex);
 }
 
 module.exports = {

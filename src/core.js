@@ -28,7 +28,7 @@ class AirMapAuth {
         this._autoLaunch = options && options.hasOwnProperty('autoLaunch') ? options.autoLaunch : false;
         this._onAuthenticated = options && options.hasOwnProperty('onAuthenticated') ? options.onAuthenticated : null;
         this._onAuthorizationError = options && options.hasOwnProperty('onAuthorizationError') ? options.onAuthorizationError : null;
-        this._options = {
+        this._authOptions = {
             auth: {
                 redirectUrl: this._callbackUrl,
                 redirect: true,
@@ -51,7 +51,7 @@ class AirMapAuth {
         };
 
         // Creates an instance of Auth0Lock and then initiates Event Emitters
-        this._lock = new Auth0Lock(this._clientId, this._domain, this._options);
+        this._lock = new Auth0Lock(this._clientId, this._domain, this._authOptions);
         this._initAuth();
     }
 
@@ -65,7 +65,10 @@ class AirMapAuth {
         this._lock.on('authenticated', (authResult) => {
             localStorage.setItem(this._tokenName, authResult.idToken);
             this._userId = authResult.idTokenPayload.sub;
-            this._onAuthenticated(authResult);
+            if (this._onAuthenticated && typeof this._onAuthenticated === 'function') {
+                this._onAuthenticated(authResult);
+            }
+            this._lock.hide();
         });
         // Listens to 'unrecoverable_error' which is emitted when there is an unrecoverable error, for instance when no connection is available.
         this._lock.on('unrecoverable_error', (error) => {
@@ -74,10 +77,12 @@ class AirMapAuth {
         // Listens to 'authorization_error' which is emitted when authorization fails. Calls logout without a redirect, launches an Auth Modal, and parses error for user.
         this._lock.on('authorization_error', (error) => {
             this.logout();
-            this._onAuthorizationError(error);
             this._lock.show();
             console.warn(error);
             checkForEmailErrors(error);
+            if (this._onAuthorizationError && typeof this._onAuthorizationError === 'function') {
+                this._onAuthorizationError(error);
+            }
         });
         // Attaching event listener for DOM load when autoLaunch is desired so that an authenticated check is made.
         if (this._autoLaunch) {
@@ -97,6 +102,7 @@ class AirMapAuth {
         // Also, handling race conditions by checking hash for id_token as a redirect (causing DOM loading) fires before 'authenticated' event.
         let authenticated = this.isAuthenticated();
         if (authenticated || window.location.hash.indexOf('id_token') > -1) {
+            this._lock.hide();
             return;
         } else {
             this._lock.show();
@@ -162,4 +168,5 @@ class AirMapAuth {
         }
     }
 }
+
 module.exports = AirMapAuth;
