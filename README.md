@@ -18,7 +18,7 @@ From CDN
 
 ```html
 <!-- Latest patch release -->
-<script src="https://cdn.airmap.io/js/auth/1.2.7/airmap-auth.min.js"></script>
+<script src="https://cdn.airmap.io/js/auth/1.2.6/airmap-auth.min.js"></script>
 
 <!-- Latest minor release -->
 <script src="https://cdn.airmap.io/js/auth/v1.2/index.min.js"></script>
