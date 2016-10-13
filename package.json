@@ -32,7 +32,7 @@
     "release": "sh ./scripts/release.sh",
     "test": "mocha --compilers js:babel-register --recursive test/setup.js test/unit/*",
     "test:circle": "npm run env-test && node_modules/.bin/mocha --recursive --reporter mocha-junit-reporter test/setup.js test/unit/* --reporter-options mochaFile=$CIRCLE_TEST_REPORTS/mocha/unit.xml",
-    "start": "budo ./src/index.js --serve=examples/bundle.js --port=8080 --live -ssl --cors --dir=examples -- -t babelify"
+    "start": "budo ./examples/index.js --serve=examples/bundle.js --port=8080 --live -ssl --cors --dir=examples -- -t babelify"
   },
   "dependencies": {
     "auth0-lock": "^10.1.0",
