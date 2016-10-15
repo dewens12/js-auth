@@ -50,7 +50,7 @@ After installing the `airmap-auth` module, you'll need bundle it up along with a
 
 ## Demo
 
-[Clone the repo](https://github.com/airmap/js-auth) and run `npm install`. Open the 'index.html' file in the 'examples' folder and add the config object from the AirMap Developer Portal. Then, run `npm start` in the command line and navigate to http://localhost:8080/.
+[Clone the repo](https://github.com/airmap/js-auth) and run `npm install`. Open the 'index.js' file in the 'examples' folder and add the config object from the AirMap Developer Portal. Then, run `npm start` in the command line and navigate to http://localhost:8080/.
 
 > Note: When testing the module with the provided examples, you'll want to update the `callback_url` with http://localhost:8080/ in the following two places:
 

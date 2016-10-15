@@ -22,10 +22,10 @@
     ]
   },
   "scripts": {
-    "build-prod-cdn": "browserify -t [babelify] src/index.js -s AirMapAuth | uglifyjs -c -m > dist/airmap-auth.min.js",
-    "build-prod-npm": "browserify -t [babelify] src/index.js -s AirMapAuth | uglifyjs -c -m > dist/index.js",
+    "build-prod-cdn": "mkdir -p dist && browserify -t [babelify] src/index.js -s AirMapAuth | uglifyjs -c -m > dist/airmap-auth.min.js",
+    "build-prod-npm": "mkdir -p dist && browserify -t [babelify] src/index.js -s AirMapAuth | uglifyjs -c -m > dist/index.js",
     "build-prod": "npm run build-prod-cdn && npm run build-prod-npm",
-    "build-dev": "browserify -t [babelify] src/index.js -s AirMapAuth > dist/index.js",
+    "build-dev": "mkdir -p dist && browserify -t [babelify] src/index.js -s AirMapAuth > dist/index.js",
     "docs": "node_modules/.bin/jsdoc2md src/** > API.md",
     "prepublish": "npm run build-prod",
     "standard-version": "standard-version",
