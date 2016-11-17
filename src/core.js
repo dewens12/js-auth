@@ -31,11 +31,14 @@ class AirMapAuth {
         this._authOptions = {
             auth: {
                 redirectUrl: this._callbackUrl,
-                redirect: true,
+                redirect: false,
                 responseType: 'token',
                 sso: true,
-                allowedConnections: ['Username-Password-Authentication', 'google']
-                },
+                allowedConnections: ['Username-Password-Authentication', 'google'],
+                params: {
+                    prompt: 'login'
+                }
+            },
             closable: options && options.hasOwnProperty('closeable') ? options.closeable : true,
             theme: {
                 logo: 'https://cdn.airmap.io/img/login-logo.png',

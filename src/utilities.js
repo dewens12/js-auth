@@ -1,3 +1,5 @@
+const escape = require('lodash.escape');
+
 const supportsLocalStorage = () => {
     // Safari, in Private Browsing Mode, looks like it supports localStorage but all calls to setItem
     // throw QuotaExceededError. We're going to detect this and just silently drop any calls to setItem
@@ -24,10 +26,12 @@ const checkForEmailErrors = (authResult) => {
     if (authResult.error == 'unauthorized') {
         let error_description = JSON.parse(authResult.error_description);
         switch (error_description.type) {
-            case 'email_verification':
-                openEmailVerificationError(error_description.resend_link);
             case 'domain_blacklist':
                 openDomainBlacklistError();
+                break;
+            case 'email_verification':
+                openEmailVerificationError(error_description.resend_link);
+                break;
             default:
                 break;
         }
@@ -41,7 +45,7 @@ const openDomainBlacklistError = () => {
 
 const openEmailVerificationError = (resendLink) => {
     if (validateLink(resendLink)) {
-        const warning = `Your email address has not been verified yet. Please check the link that was emailed to you, or <a href="${resendLink}">click here</a> to resend the link.`;
+        const warning = `Your email address has not been verified yet. Please check the link that was emailed to you, or <a href="${escape(resendLink)}">click here</a> to resend the link.`;
         insertErrorMsg(warning);
     } else {
         insertErrorMsg('Your email address has not been verified yet. Please check the link that was emailed to you.');

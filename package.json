@@ -36,7 +36,8 @@
   },
   "dependencies": {
     "auth0-lock": "^10.1.0",
-    "jsonwebtoken": "^7.1.9"
+    "jsonwebtoken": "^7.1.9",
+    "lodash.escape": "^4.0.1"
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",

@@ -26,11 +26,8 @@ describe('AirMap Auth Tests', () => {
     })
 
     describe('Produces correct instance methods of AirMapAuth', () => {
-        it('showAuth is instance methods of AirMapAuth', () => {
+        it('_initAuth is instance methods of AirMapAuth', () => {
             expect(auth).to.have.property('_initAuth')
-        })
-        it('showAuth is instance methods of AirMapAuth', () => {
-            expect(auth).to.have.property('_loaded')
         })
         it('showAuth is instance methods of AirMapAuth', () => {
             expect(auth).to.have.property('showAuth')
