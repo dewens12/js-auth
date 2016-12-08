@@ -88,7 +88,8 @@ class AirMapAuth {
         this._lock.on('authorization_error', (error) => {
             this.logout();
             this._lock.show();
-            console.warn(error);
+            const parsedError = JSON.parse(error.error_description)
+            if(parsedError.type !== 'email_verification') console.warn(error);
             checkForEmailErrors(error);
             if (this._onAuthorizationError && typeof this._onAuthorizationError === 'function') {
                 this._onAuthorizationError(error);
