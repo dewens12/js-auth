@@ -19,6 +19,16 @@ class AirMapAuth {
       * @returns {AirMapAuth}
       */
     constructor(config, options = null) {
+        // Checks for Auth0 Config Variables
+        if (!config || typeof config.auth0 === 'undefined') {
+            throw Error('AirMap Auth - unable to instatiate an AirMap Auth Module due to missing Airmap Auth0 config variables')
+        }
+        if (config.auth0.client_id === 'undefined' || !config.auth0.client_id) {
+            throw Error('AirMap Auth - unable to instatiate an AirMap Auth Module due to missing Airmap Auth0 client_id')
+        }
+        if (config.auth0.callback_url === 'undefined' || !config.auth0.callback_url) {
+            throw Error('AirMap Auth - unable to instatiate an AirMap Auth Module due to missing Airmap Auth0 callback_url')
+        }
         // Auth Settings - Classwide Config Variables
         this._clientId = config.auth0.client_id;
         this._callbackUrl = config.auth0.callback_url;
@@ -35,7 +45,7 @@ class AirMapAuth {
                 responseType: 'token',
                 sso: true,
                 allowedConnections: ['Username-Password-Authentication', 'google']
-                },
+            },
             closable: options && options.hasOwnProperty('closeable') ? options.closeable : true,
             theme: {
                 logo: 'https://cdn.airmap.io/img/login-logo.png',
@@ -78,7 +88,8 @@ class AirMapAuth {
         this._lock.on('authorization_error', (error) => {
             this.logout();
             this._lock.show();
-            console.warn(error);
+            const parsedError = JSON.parse(error.error_description)
+            if(parsedError.type !== 'email_verification') console.warn(error);
             checkForEmailErrors(error);
             if (this._onAuthorizationError && typeof this._onAuthorizationError === 'function') {
                 this._onAuthorizationError(error);

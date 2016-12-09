@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.7"></a>
+## [1.2.7](https://github.com/airmap/js-auth/compare/v1.2.6...v1.2.7) (2016-11-17)
+
+
+
 <a name="1.2.6"></a>
 ## [1.2.6](https://github.com/airmap/js-auth/compare/v1.2.4...v1.2.6) (2016-08-23)
 
