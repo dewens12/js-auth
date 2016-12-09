@@ -54,7 +54,7 @@ After installing the `airmap-auth` module, you'll need bundle it up along with a
 
 > Note: When testing the module with the provided examples, you'll want to update the `callback_url` with http://localhost:8080/ in the following two places:
 
->• 'index.html' file in the `config` object provided to the AirMapAuth constructor
+>• 'index.js' file in the `config` object provided to the AirMapAuth constructor
 
 >• 'Callback URL' field in the Auth0 section of the AirMap Developer Portal
 
