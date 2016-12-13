@@ -1,6 +1,7 @@
 const Auth0Lock = require('auth0-lock').default;
 const jwt = require('jsonwebtoken');
 const { supportsLocalStorage, checkForEmailErrors } = require('./utilities.js');
+const escape = require('lodash.escape');
 
 /** Class for handling the AirMap Auth Module */
 class AirMapAuth {
@@ -16,6 +17,7 @@ class AirMapAuth {
       * @param {boolean} options.autoLaunch Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`
       * @param {function} options.onAuthenticated Optional function. Function called when Auth Module successfully authenticates the user. Parameter passed to function is the resulting Authorization object
       * @param {function} options.onAuthorizationError Optional function. Function called when there is an error in authentication. Parameter passed to function is the resulting error object
+      * @param {string} options.state Optional string. String will be passed back with the Authorization object as 'state' on a successful authentication
       * @returns {AirMapAuth}
       */
     constructor(config, options = null) {
@@ -38,13 +40,17 @@ class AirMapAuth {
         this._autoLaunch = options && options.hasOwnProperty('autoLaunch') ? options.autoLaunch : false;
         this._onAuthenticated = options && options.hasOwnProperty('onAuthenticated') ? options.onAuthenticated : null;
         this._onAuthorizationError = options && options.hasOwnProperty('onAuthorizationError') ? options.onAuthorizationError : null;
+        this._authState = (options && options.state) ? options.state : ''
         this._authOptions = {
             auth: {
                 redirectUrl: this._callbackUrl,
                 redirect: true,
                 responseType: 'token',
                 sso: true,
-                allowedConnections: ['Username-Password-Authentication', 'google']
+                allowedConnections: ['Username-Password-Authentication', 'google'],
+                params: {
+                    state: this._authState
+                }
             },
             closable: options && options.hasOwnProperty('closeable') ? options.closeable : true,
             theme: {

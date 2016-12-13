@@ -12,12 +12,14 @@ const config = {
 // autoLaunch: Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`
 // onAuthenticated: Optional function. Function called when Auth Module successfully authenticates the user. Parameter passed to function is the resulting Authorization object
 // onAuthorizationError: Optional function. Function called when there is an error in authentication. Parameter passed to function is the resulting error object
+// state: Optional string. String will be passed back with the Authorization object as 'state' on a successful authentication
 // Additional options for AirMap Auth Module
 const options = {
     closeable: true,
     autoLaunch: false,
     onAuthenticated: (authResult) => {console.log('onAuthenticated', authResult)},
-    onAuthorizationError: (error) => {console.log('onAuthorizationError', error)}
+    onAuthorizationError: (error) => {console.log('onAuthorizationError', error)},
+    state: 'redirect_url'
 }
 
 // Create an instance of AirMapAuth and provide it with some configuration settings
