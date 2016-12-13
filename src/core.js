@@ -1,7 +1,6 @@
 const Auth0Lock = require('auth0-lock').default;
 const jwt = require('jsonwebtoken');
 const { supportsLocalStorage, checkForEmailErrors } = require('./utilities.js');
-const escape = require('lodash.escape');
 
 /** Class for handling the AirMap Auth Module */
 class AirMapAuth {
