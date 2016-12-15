@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.1"></a>
+## [1.3.1](https://github.com/airmap/js-auth/compare/v1.3.0...v1.3.1) (2016-12-15)
+
+
+### Bug Fixes
+
+* Updated build script for npm to fix how the files were being built for npm. Previously, the package was being bundled with dependencies. Now, the package is transpiled to ES5 before it gets deployed to npm and lists all necessary dependencies that will be installed and bundled by the consuming application. ([fb5bb2a](https://github.com/airmap/js-auth/commit/fb5bb2a))
+
+
+
 <a name="1.3.0"></a>
 # [1.3.0](https://github.com/airmap/js-auth/compare/v1.2.7...v1.3.0) (2016-12-13)
 
