@@ -11,4 +11,32 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
-module.exports = { chai, expect, sinon }
+const configMock = {
+    "airmap": {
+        "api_key": "ey123abc"
+    },
+    "auth0": {
+        "client_id": "def456",
+        "callback_url": "localhost:8080"
+    },
+    "mapbox": {
+        "access_token": "0321654"
+    }
+}
+
+const defaultOptions = {
+    autoLaunch: false,
+    closeable: true,
+    onAuthenticated: (authResult) => null,
+    onAuthorizationError: (error) => null,
+    state: ''
+}
+
+
+module.exports = {
+    chai,
+    configMock,
+    defaultOptions,
+    expect,
+    sinon
+}

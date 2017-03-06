@@ -17,8 +17,8 @@ const config = {
 const options = {
     closeable: true,
     autoLaunch: false,
-    onAuthenticated: (authResult) => {console.log('onAuthenticated', authResult)},
-    onAuthorizationError: (error) => {console.log('onAuthorizationError', error)},
+    onAuthenticated: (authResult) => console.log('onAuthenticated', authResult),
+    onAuthorizationError: (error) => console.log('onAuthorizationError', error),
     state: 'redirect_url'
 }
 
