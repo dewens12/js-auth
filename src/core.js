@@ -41,28 +41,28 @@ class AirMapAuth {
         this._onAuthorizationError = options && options.hasOwnProperty('onAuthorizationError') ? options.onAuthorizationError : null;
         this._authState = (options && options.state) ? options.state : ''
         this._authOptions = {
+            allowedConnections: ['Username-Password-Authentication', 'google-oauth2'],
             auth: {
                 redirectUrl: this._callbackUrl,
                 redirect: true,
                 responseType: 'token',
                 sso: true,
-                allowedConnections: ['Username-Password-Authentication', 'google'],
                 params: {
                     state: this._authState
                 }
             },
+            avatar: null,
             closable: options && options.hasOwnProperty('closeable') ? options.closeable : true,
-            theme: {
-                logo: 'https://cdn.airmap.io/img/login-logo.png',
-                primaryColor: '#87dadf'
-            },
-            rememberLastLogin: false,
-            socialButtonStyle: 'big',
             languageDictionary: {
                 emailInputPlaceholder: 'email@emailprovider.com',
                 title: ''
             },
-            avatar: null
+            rememberLastLogin: false,
+            socialButtonStyle: 'big',
+            theme: {
+                logo: 'https://cdn.airmap.io/img/login-logo.png',
+                primaryColor: '#87dadf'
+            }
         };
 
         // Creates an instance of Auth0Lock and then initiates Event Emitters
