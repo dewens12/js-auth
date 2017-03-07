@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.2"></a>
+## [1.3.2](https://github.com/airmap/js-auth/compare/v1.3.1...v1.3.2) (2017-03-07)
+
+
+### Bug Fixes
+
+* Ensure allowedConnections are correctly passed through to Auth0. ([3d8c20f](https://github.com/airmap/js-auth/commit/3d8c20f))
+* Upgrade Auth0 to fix logo width regression. ([40574af](https://github.com/airmap/js-auth/commit/40574af))
+
+
+
 <a name="1.3.1"></a>
 ## [1.3.1](https://github.com/airmap/js-auth/compare/v1.3.0...v1.3.1) (2016-12-15)
 

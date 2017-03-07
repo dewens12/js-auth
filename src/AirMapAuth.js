@@ -1,5 +1,6 @@
 const Auth0Lock = require('auth0-lock').default;
 const jwt = require('jsonwebtoken');
+const { BadConfigError } = require('./error');
 const { supportsLocalStorage, checkForEmailErrors } = require('./utilities.js');
 
 /** Class for handling the AirMap Auth Module */
@@ -19,55 +20,60 @@ class AirMapAuth {
       * @param {string} options.state Optional string. String will be passed back with the Authorization object as 'state' on a successful authentication
       * @returns {AirMapAuth}
       */
-    constructor(config, options = null) {
+    constructor(config, opts = {}) {
         // Checks for Auth0 Config Variables
         if (!config || typeof config.auth0 === 'undefined') {
-            throw Error('AirMap Auth - unable to instatiate an AirMap Auth Module due to missing Airmap Auth0 config variables')
+            throw new BadConfigError('auth0');
         }
         if (config.auth0.client_id === 'undefined' || !config.auth0.client_id) {
-            throw Error('AirMap Auth - unable to instatiate an AirMap Auth Module due to missing Airmap Auth0 client_id')
+            throw new BadConfigError('auth0.client_id');
         }
         if (config.auth0.callback_url === 'undefined' || !config.auth0.callback_url) {
-            throw Error('AirMap Auth - unable to instatiate an AirMap Auth Module due to missing Airmap Auth0 callback_url')
+            throw new BadConfigError('auth0.callback_url');
         }
         // Auth Settings - Classwide Config Variables
+        this.opts = { ...this.defaults, ...opts };
         this._clientId = config.auth0.client_id;
         this._callbackUrl = config.auth0.callback_url;
         this._tokenName = 'AirMapUserToken';
         this._domain = 'sso.airmap.io';
         this._userId = null;
-        this._autoLaunch = options && options.hasOwnProperty('autoLaunch') ? options.autoLaunch : false;
-        this._onAuthenticated = options && options.hasOwnProperty('onAuthenticated') ? options.onAuthenticated : null;
-        this._onAuthorizationError = options && options.hasOwnProperty('onAuthorizationError') ? options.onAuthorizationError : null;
-        this._authState = (options && options.state) ? options.state : ''
         this._authOptions = {
+            allowedConnections: ['Username-Password-Authentication', 'google-oauth2'],
             auth: {
                 redirectUrl: this._callbackUrl,
                 redirect: true,
                 responseType: 'token',
                 sso: true,
-                allowedConnections: ['Username-Password-Authentication', 'google'],
                 params: {
-                    state: this._authState
+                    state: this.opts.state
                 }
             },
-            closable: options && options.hasOwnProperty('closeable') ? options.closeable : true,
-            theme: {
-                logo: 'https://cdn.airmap.io/img/login-logo.png',
-                primaryColor: '#87dadf'
-            },
-            rememberLastLogin: false,
-            socialButtonStyle: 'big',
+            avatar: null,
+            closable: this.opts.closeable,
             languageDictionary: {
                 emailInputPlaceholder: 'email@emailprovider.com',
                 title: ''
             },
-            avatar: null
+            rememberLastLogin: false,
+            socialButtonStyle: 'big',
+            theme: {
+                logo: 'https://cdn.airmap.io/img/login-logo.png',
+                primaryColor: '#87dadf'
+            }
         };
 
         // Creates an instance of Auth0Lock and then initiates Event Emitters
         this._lock = new Auth0Lock(this._clientId, this._domain, this._authOptions);
         this._initAuth();
+    }
+
+    get defaults() {
+        return this.constructor.defaults;
+    }
+
+    get options() {
+        return this.opts
     }
 
     _initAuth() {
@@ -80,9 +86,7 @@ class AirMapAuth {
         this._lock.on('authenticated', (authResult) => {
             localStorage.setItem(this._tokenName, authResult.idToken);
             this._userId = authResult.idTokenPayload.sub;
-            if (this._onAuthenticated && typeof this._onAuthenticated === 'function') {
-                this._onAuthenticated(authResult);
-            }
+            this.opts.onAuthenticated(authResult);
             this._lock.hide();
         });
         // Listens to 'unrecoverable_error' which is emitted when there is an unrecoverable error, for instance when no connection is available.
@@ -94,15 +98,13 @@ class AirMapAuth {
             this.logout();
             this._lock.show();
             const parsedError = JSON.parse(error.error_description)
-            if(parsedError.type !== 'email_verification') console.warn(error);
+            if (parsedError.type !== 'email_verification') console.warn(error);
             checkForEmailErrors(error);
-            if (this._onAuthorizationError && typeof this._onAuthorizationError === 'function') {
-                this._onAuthorizationError(error);
-            }
+            this.opts.onAuthorizationError(error);
         });
         // Attaching event listener for DOM load when autoLaunch is desired so that an authenticated check is made.
-        if (this._autoLaunch) {
-            document.addEventListener("DOMContentLoaded", () => {
+        if (this.opts.autoLaunch) {
+            document.addEventListener('DOMContentLoaded', () => {
                 this.showAuth();
             });
         }
@@ -184,5 +186,14 @@ class AirMapAuth {
         }
     }
 }
+
+AirMapAuth.defaults = {
+    autoLaunch: false,
+    closeable: true,
+    onAuthenticated: (authResult) => null,
+    onAuthorizationError: (error) => null,
+    state: ''
+}
+
 
 module.exports = AirMapAuth;
