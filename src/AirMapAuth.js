@@ -1,7 +1,7 @@
 const Auth0Lock = require('auth0-lock').default;
 const jwt = require('jsonwebtoken');
 const { BadConfigError } = require('./error');
-const { supportsLocalStorage, checkForEmailErrors } = require('./utilities.js');
+const { supportsLocalStorage, getErrorMessage } = require('./utilities.js');
 
 /** Class for handling the AirMap Auth Module */
 class AirMapAuth {
@@ -95,11 +95,14 @@ class AirMapAuth {
         });
         // Listens to 'authorization_error' which is emitted when authorization fails. Calls logout without a redirect, launches an Auth Modal, and parses error for user.
         this._lock.on('authorization_error', (error) => {
+            const errorMsg = getErrorMessage(error);
             this.logout();
-            this._lock.show();
-            const parsedError = JSON.parse(error.error_description)
-            if (parsedError.type !== 'email_verification') console.warn(error);
-            checkForEmailErrors(error);
+            if (!errorMsg) {
+                console.warn(error);
+                this._lock.show({ flashMessage: { type: 'error', text: 'There was an error authenticating.' } });
+            } else {
+                this._lock.show({ flashMessage: { type: 'error', text: errorMsg } });
+            }
             this.opts.onAuthorizationError(error);
         });
         // Attaching event listener for DOM load when autoLaunch is desired so that an authenticated check is made.
