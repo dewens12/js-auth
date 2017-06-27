@@ -13,9 +13,10 @@ class AirMapAuth {
       * @param {string} config.auth0.client_id - Client ID provided by AirMap
       * @param {string} config.auth0.callback_url Callback URL provided by AirMap
       * @param {Object} options Optional settings for the AirMap Auth Module
+      * @param {boolean} options.autoLaunch Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`
       * @param {boolean} options.closeable Optional boolean will determine if the auth window can be closed when launched. Defaults to `true`
       * @param {string} options.domain Optional string. Defaults to `sso.airmap.io`.
-      * @param {boolean} options.autoLaunch Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`
+      * @param {string} options.language Optional string. Language code for UI text. Defaults to `en`.
       * @param {function} options.onAuthenticated Optional function. Function called when Auth Module successfully authenticates the user. Parameter passed to function is the resulting Authorization object
       * @param {function} options.onAuthorizationError Optional function. Function called when there is an error in authentication. Parameter passed to function is the resulting error object
       * @param {string} options.state Optional string. String will be passed back with the Authorization object as 'state' on a successful authentication
@@ -37,7 +38,7 @@ class AirMapAuth {
         this._clientId = config.auth0.client_id;
         this._callbackUrl = config.auth0.callback_url;
         this._tokenName = 'AirMapUserToken';
-        this._domain = this.opts.domain || 'sso.airmap.io';
+        this._domain = this.opts.domain;
         this._userId = null;
         this._authOptions = {
             allowedConnections: ['Username-Password-Authentication', 'google-oauth2'],
@@ -52,14 +53,15 @@ class AirMapAuth {
             },
             avatar: null,
             closable: this.opts.closeable,
+            language: this.opts.language,
             languageDictionary: {
-                emailInputPlaceholder: 'email@emailprovider.com',
+                emailInputPlaceholder: 'email@domain.com',
                 title: ''
             },
             rememberLastLogin: false,
             socialButtonStyle: 'big',
             theme: {
-                logo: 'https://cdn.airmap.io/img/login-logo.png',
+                logo: this.opts.logo,
                 primaryColor: '#87dadf'
             }
         };
@@ -211,6 +213,9 @@ class AirMapAuth {
 AirMapAuth.defaults = {
     autoLaunch: false,
     closeable: true,
+    domain: 'sso.airmap.io',
+    language: 'en',
+    logo: 'https://cdn.airmap.io/img/login-logo.png',
     onAuthenticated: (authResult) => null,
     onAuthorizationError: (error) => null,
     state: ''
