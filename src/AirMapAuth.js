@@ -14,6 +14,7 @@ class AirMapAuth {
       * @param {string} config.auth0.callback_url Callback URL provided by AirMap
       * @param {Object} options Optional settings for the AirMap Auth Module
       * @param {boolean} options.closeable Optional boolean will determine if the auth window can be closed when launched. Defaults to `true`
+      * @param {string} options.domain Optional string. Defaults to `sso.airmap.io`.
       * @param {boolean} options.autoLaunch Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`
       * @param {function} options.onAuthenticated Optional function. Function called when Auth Module successfully authenticates the user. Parameter passed to function is the resulting Authorization object
       * @param {function} options.onAuthorizationError Optional function. Function called when there is an error in authentication. Parameter passed to function is the resulting error object
@@ -36,7 +37,7 @@ class AirMapAuth {
         this._clientId = config.auth0.client_id;
         this._callbackUrl = config.auth0.callback_url;
         this._tokenName = 'AirMapUserToken';
-        this._domain = 'sso.airmap.io';
+        this._domain = this.opts.domain || 'sso.airmap.io';
         this._userId = null;
         this._authOptions = {
             allowedConnections: ['Username-Password-Authentication', 'google-oauth2'],
