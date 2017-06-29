@@ -1,7 +1,7 @@
 const Auth0Lock = require('auth0-lock').default;
 const jwt = require('jsonwebtoken');
-const { BadConfigError } = require('./error');
-const { supportsLocalStorage, checkForEmailErrors } = require('./utilities.js');
+const { AuthorizationError, BadConfigError } = require('./error');
+const { supportsLocalStorage } = require('./utilities.js');
 
 /** Class for handling the AirMap Auth Module */
 class AirMapAuth {
@@ -13,8 +13,10 @@ class AirMapAuth {
       * @param {string} config.auth0.client_id - Client ID provided by AirMap
       * @param {string} config.auth0.callback_url Callback URL provided by AirMap
       * @param {Object} options Optional settings for the AirMap Auth Module
-      * @param {boolean} options.closeable Optional boolean will determine if the auth window can be closed when launched. Defaults to `true`
       * @param {boolean} options.autoLaunch Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`
+      * @param {boolean} options.closeable Optional boolean will determine if the auth window can be closed when launched. Defaults to `true`
+      * @param {string} options.domain Optional string. Defaults to `sso.airmap.io`.
+      * @param {string} options.language Optional string. Language code for UI text. Defaults to `en`.
       * @param {function} options.onAuthenticated Optional function. Function called when Auth Module successfully authenticates the user. Parameter passed to function is the resulting Authorization object
       * @param {function} options.onAuthorizationError Optional function. Function called when there is an error in authentication. Parameter passed to function is the resulting error object
       * @param {string} options.state Optional string. String will be passed back with the Authorization object as 'state' on a successful authentication
@@ -36,7 +38,7 @@ class AirMapAuth {
         this._clientId = config.auth0.client_id;
         this._callbackUrl = config.auth0.callback_url;
         this._tokenName = 'AirMapUserToken';
-        this._domain = 'sso.airmap.io';
+        this._domain = this.opts.domain;
         this._userId = null;
         this._authOptions = {
             allowedConnections: ['Username-Password-Authentication', 'google-oauth2'],
@@ -51,14 +53,15 @@ class AirMapAuth {
             },
             avatar: null,
             closable: this.opts.closeable,
+            language: this.opts.language,
             languageDictionary: {
-                emailInputPlaceholder: 'email@emailprovider.com',
+                emailInputPlaceholder: 'email@domain.com',
                 title: ''
             },
             rememberLastLogin: false,
             socialButtonStyle: 'big',
             theme: {
-                logo: 'https://cdn.airmap.io/img/login-logo.png',
+                logo: this.opts.logo,
                 primaryColor: '#87dadf'
             }
         };
@@ -82,7 +85,7 @@ class AirMapAuth {
             window.alert('Your web browser does not support storing settings locally. In Safari, the most common cause of this is using "Private Browsing Mode". Please try exiting Private Browsing Mode and logging in again, or using another browser.');
         }
         // Auth0 Lock Event Emitters
-        // Listens to the 'authenticated' event which is emitted when a user logs in and emmediately stores a token into localStorage.
+        // Listens to the 'authenticated' event which is emitted when a user logs in and immediately stores a token in localStorage.
         this._lock.on('authenticated', (authResult) => {
             localStorage.setItem(this._tokenName, authResult.idToken);
             this._userId = authResult.idTokenPayload.sub;
@@ -96,10 +99,15 @@ class AirMapAuth {
         // Listens to 'authorization_error' which is emitted when authorization fails. Calls logout without a redirect, launches an Auth Modal, and parses error for user.
         this._lock.on('authorization_error', (error) => {
             this.logout();
-            this._lock.show();
-            const parsedError = JSON.parse(error.error_description)
-            if (parsedError.type !== 'email_verification') console.warn(error);
-            checkForEmailErrors(error);
+            const err = {
+                ...error,
+                error_description: {
+                    type: '',
+                    ...JSON.parse(error.error_description)
+                }
+            }
+            const authErr = new AuthorizationError(err.error_description.type);
+            this._showAuthError(authErr.getText());
             this.opts.onAuthorizationError(error);
         });
         // Attaching event listener for DOM load when autoLaunch is desired so that an authenticated check is made.
@@ -111,12 +119,27 @@ class AirMapAuth {
     }
 
     /**
+     *  Launches the Auth Modal with an error message displayed.
+     *  @private
+     *  @param {string} text - Error message text to display.
+     *  @return {void}
+     */
+    _showAuthError(text) {
+        this._lock.show({
+            flashMessage: {
+                type: 'error',
+                text
+            }
+        });
+    }
+
+    /**
      *  Launches the Auth Modal after checking if a valid auth token is available.
      *  @public
      *  @return {void}
      */
     showAuth() {
-        //Will only show Auth Modal when user does not have a valid auth token available.
+        // Will only show Auth Modal when user does not have a valid auth token available.
         // Also, handling race conditions by checking hash for id_token as a redirect (causing DOM loading) fires before 'authenticated' event.
         let authenticated = this.isAuthenticated();
         if (authenticated || window.location.hash.indexOf('id_token') > -1) {
@@ -190,6 +213,9 @@ class AirMapAuth {
 AirMapAuth.defaults = {
     autoLaunch: false,
     closeable: true,
+    domain: 'sso.airmap.io',
+    language: 'en',
+    logo: 'https://cdn.airmap.io/img/login-logo.png',
     onAuthenticated: (authResult) => null,
     onAuthorizationError: (error) => null,
     state: ''
