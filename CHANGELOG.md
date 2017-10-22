@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.5.0"></a>
+# [1.5.0](https://github.com/airmap/js-auth/compare/v1.3.2...v1.5.0) (2017-10-22)
+
+
+### Bug Fixes
+
+* Bump Auth0 lock to latest version. ([2ff01e5](https://github.com/airmap/js-auth/commit/2ff01e5))
+* Change version of auth0-lock to 10.22.0 which uses older version of react-transition-group. ([e10cf0a](https://github.com/airmap/js-auth/commit/e10cf0a))
+* Update email verification error message. ([c23ff75](https://github.com/airmap/js-auth/commit/c23ff75))
+
+
+### Features
+
+* Add option to configure sso domain. ([17be534](https://github.com/airmap/js-auth/commit/17be534))
+* Add option to select a language. ([0002654](https://github.com/airmap/js-auth/commit/0002654))
+
+
+
 <a name="1.4.0"></a>
 # [1.4.0](https://github.com/airmap/js-auth/compare/v1.3.2...v1.4.0) (2017-06-29)
 
