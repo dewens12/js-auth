@@ -35,7 +35,7 @@
     "test:circle": "export NODE_PATH=./ && mocha --compilers js:babel-register --recursive --reporter mocha-junit-reporter test/setup.js test/unit/* --reporter-options mochaFile=$CIRCLE_TEST_REPORTS/mocha/unit.xml"
   },
   "dependencies": {
-    "auth0-lock": "^10.17.0",
+    "auth0-lock": "10.22.0",
     "jsonwebtoken": "^7.1.9"
   },
   "devDependencies": {
