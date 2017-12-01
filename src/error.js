@@ -1,3 +1,5 @@
+import { authorizationErrorsConsts } from './constants'
+
 /**
  * Error caused when config is malformatted.
  * @private
@@ -13,25 +15,13 @@ class BadConfigError extends Error {
  * @private
  */
 class AuthorizationError {
-
     constructor(type) {
-        this.type = type
+        this.type = authorizationErrorsConsts['en'][type] ? type : '__default__'
     }
 
-    getText() {
-        switch (this.type) {
-            case 'domain_blacklist':
-                return `Sorry, we are unable to create an account for this email address. Please register with an address from another domain.`;
-                break;
-            case 'email_verification':
-                return `Your email address has not been verified. Please click the link that was sent to you.`;
-                break;
-            default:
-                return `There was an error authenticating.`;
-                break;
-        }
+    getText(lang = 'en') {
+        return authorizationErrorsConsts[lang][this.type]
     }
-
 }
 
 
