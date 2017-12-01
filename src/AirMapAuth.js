@@ -107,7 +107,7 @@ class AirMapAuth {
                 }
             }
             const authErr = new AuthorizationError(err.error_description.type);
-            this._showAuthError(authErr.getText());
+            this._showAuthError(authErr.getText(this.opts.language));
             this.opts.onAuthorizationError(error);
         });
         // Attaching event listener for DOM load when autoLaunch is desired so that an authenticated check is made.
