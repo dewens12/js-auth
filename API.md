@@ -14,6 +14,14 @@
 </dd>
 </dl>
 
+## Constants
+
+<dl>
+<dt><a href="#authorizationErrorsConsts">authorizationErrorsConsts</a></dt>
+<dd><p>AuthorizationError language/type mappings</p>
+</dd>
+</dl>
+
 <a name="module_airmap-auth"></a>
 
 ## airmap-auth
@@ -98,3 +106,9 @@ Logs out a user by removing the authenticated user token from localStorage and r
 | --- | --- | --- | --- |
 | logoutUrl | <code>string</code> | <code>null</code> | If a logout url is provided as a parameter, upon logging out, page will be redirected to the provided url, otherwise no redirect. |
 
+<a name="authorizationErrorsConsts"></a>
+
+## authorizationErrorsConsts
+AuthorizationError language/type mappings
+
+**Kind**: global constant  
