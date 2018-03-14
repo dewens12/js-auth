@@ -23,31 +23,31 @@ const options = {
 }
 
 // Create an instance of AirMapAuth and provide it with some configuration settings
-const auth = new AirMapAuth(config, options)
+const webAuth = new AirMapAuth(config, options)
 
 // Calls the 'showAuth' method which launches the Auth Modal
 window.login = () => {
-    auth.showAuth()
+    webAuth.showAuth()
 }
 
 // Calls the 'logout' method which destroys a user's authenticated session
 window.logout = () => {
-    auth.logout('http://localhost:8080/logout-redirect.html')
+    webAuth.logout('http://localhost:8080/logout-redirect.html')
 }
 
 // Calls the 'isAuthenticated' method which checks if a user's session is authenticated
 window.isAuthenticated = () => {
-    console.log(auth.isAuthenticated())
+    console.log(webAuth.isAuthenticated())
 }
 
 // Calls the 'getUserId' method which retrieves a user's profile (if authenticated)
 window.getUserId = () => {
-    const userId = auth.getUserId()
+    const userId = webAuth.getUserId()
     console.log(userId)
 }
 
 // Calls the 'getUserToken' method which retrieves a user's token if one exists
 window.getUserToken = () => {
-    const userToken = auth.getUserToken()
+    const userToken = webAuth.getUserToken()
     console.log(userToken)
 }
