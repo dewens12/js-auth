@@ -1,4 +1,3 @@
-//const Auth0Lock = require('auth0-lock').default;
 const auth0 = require('auth0-js')
 const jwt = require('jsonwebtoken')
 const { AuthorizationError, BadConfigError } = require('./error')
@@ -15,7 +14,6 @@ class AirMapAuth {
       * @param {string} config.auth0.callback_url Callback URL provided by AirMap
       * @param {Object} options Optional settings for the AirMap Auth Module
       * @param {boolean} options.autoLaunch Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`
-      * @param {boolean} options.closeable Optional boolean will determine if the auth window can be closed when launched. Defaults to `true`
       * @param {string} options.domain Optional string. Defaults to `sso.airmap.io`.
       * @param {string} options.language Optional string. Language code for UI text. Defaults to `en`.
       * @param {function} options.onAuthenticated Optional function. Function called when Auth Module successfully authenticates the user. Parameter passed to function is the resulting Authorization object
@@ -45,27 +43,9 @@ class AirMapAuth {
         this._authParams = {
             domain: this._domain,
             clientID: this._clientId,
-            allowedConnections: ['Username-Password-Authentication', 'google-oauth2'],
             redirectUri: this._callbackUrl,
             redirect: true,
-            responseType: 'token',
-            sso: true,
-            params: {
-                state: this.opts.state
-            },
-            avatar: null,
-            closable: this.opts.closeable,
-            language: this.opts.language,
-            languageDictionary: {
-                emailInputPlaceholder: 'email@domain.com',
-                title: ''
-            },
-            rememberLastLogin: false,
-            socialButtonStyle: 'big',
-            theme: {
-                logo: this.opts.logo,
-                primaryColor: '#87dadf'
-            }
+            responseType: 'token'
         }
 
         this._webAuth = new auth0.WebAuth(this._authParams)
@@ -156,7 +136,10 @@ class AirMapAuth {
         if (authenticated || window.location.hash.indexOf('id_token') > -1) {
             return
         } else {
-            this._webAuth.authorize()
+            this._webAuth.authorize({
+                language: this.opts.language,
+                logo: this.opts.logo
+            })
             return
         }
     }

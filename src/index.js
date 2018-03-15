@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- *  AirMap Auth0 Lock Module - JS
+ *  AirMap Auth0 Module Universal Login - JS
  *  @module airmap-auth
  */
 
