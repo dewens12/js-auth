@@ -5,21 +5,17 @@ const AirMapAuth = require('../src')
 // config is an object provided to the the AirMapAuth constructor
 // client_id: from the AirMap Developer Portal (https://dashboard.airmap.io/developer)
 // callback_url: your callback url needs to be saved on the AirMap Developer Portal (https://dashboard.airmap.io/developer)
-const config = {
-    // config settings from AirMap Developer Dashboard
-}
-// autoLaunch: Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`
-// onAuthenticated: Optional function. Function called when Auth Module successfully authenticates the user. Parameter passed to function is the resulting Authorization object
-// onAuthorizationError: Optional function. Function called when there is an error in authentication. Parameter passed to function is the resulting error object
-// state: Optional string. String will be passed back with the Authorization object as 'state' on a successful authentication
+// const config = {
+//     // config settings from AirMap Developer Dashboard
+// }
+// autoLaunch: Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`.
+// logo: Optional string. Defaults to AirMap logo.
+// language: Optional string. Language code for UI text. Defaults to `en`.
 // Additional options for AirMap Auth Module
 const options = {
-    autoLaunch: true,
-    logo: '',
-    language: 'ja',
-    onAuthenticated: (authResult) => console.log('onAuthenticated', authResult),
-    onAuthorizationError: (error) => console.log('onAuthorizationError', error),
-    state: 'redirect_url'
+    autoLaunch: false,
+    logo: 'https://cdn.airmap.io/img/login-logo.png',
+    language: 'en'
 }
 
 // Create an instance of AirMapAuth and provide it with some configuration settings
