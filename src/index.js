@@ -5,5 +5,5 @@
  *  @module airmap-auth
  */
 
-const AirMapAuth = require('./AirMapAuth');
-module.exports = AirMapAuth;
+const AirMapAuth = require('./AirMapAuth')
+module.exports = AirMapAuth

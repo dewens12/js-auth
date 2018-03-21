@@ -5,17 +5,17 @@ const supportsLocalStorage = () => {
     // see stackoverflow.com/a/27081429
     if (typeof localStorage === 'object') {
         try {
-            localStorage.setItem('localStorage', 1);
-            localStorage.removeItem('localStorage');
+            localStorage.setItem('localStorage', 1)
+            localStorage.removeItem('localStorage')
         }
         catch (e) {
-            Storage.prototype._setItem = Storage.prototype.setItem;
-            Storage.prototype.setItem = function() {};
-            return false;
+            Storage.prototype._setItem = Storage.prototype.setItem
+            Storage.prototype.setItem = function() {}
+            return false
         }
-        return true;
+        return true
     } else {
-        return false;
+        return false
     }
 }
 

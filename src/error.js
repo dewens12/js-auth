@@ -6,7 +6,7 @@ import { authorizationErrorsConsts } from './constants'
  */
 class BadConfigError extends Error {
     constructor(item) {
-        super(`AirMap Auth - unable to initialize due to missing configuration item: ${item}`);
+        super(`AirMap Auth - unable to initialize due to missing configuration item: ${item}`)
     }
 }
 
