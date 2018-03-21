@@ -26,13 +26,9 @@ const configMock = {
 
 const defaultOptions = {
     autoLaunch: false,
-    closeable: true,
     domain: 'sso.airmap.io',
     language: 'en',
-    logo: 'https://cdn.airmap.io/img/login-logo.png',
-    onAuthenticated: (authResult) => null,
-    onAuthorizationError: (error) => null,
-    state: ''
+    logo: 'https://cdn.airmap.io/img/login-logo.png'
 }
 
 

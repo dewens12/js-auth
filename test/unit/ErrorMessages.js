@@ -8,17 +8,17 @@ describe('AuthorizationError', () => {
             const authError = new AuthorizationError('domain_blacklist')
             expect(authError.type).to.equal('domain_blacklist')
         })
-    
+
         it('email_verification', () => {
             const authError = new AuthorizationError('email_verification')
             expect(authError.type).to.equal('email_verification')
         })
-    
+
         it('default', () => {
             const authError = new AuthorizationError()
             expect(authError.type).to.equal('__default__')
         })
-    
+
         it('unknown becomes default', () => {
             const authError = new AuthorizationError()
             expect(authError.type).to.equal('__default__')
@@ -90,5 +90,5 @@ describe('AuthorizationError', () => {
             .to.equal(authorizationErrorsConsts.ja.__default__)
         })
     })
-    
+
 })
