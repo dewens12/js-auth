@@ -15,14 +15,17 @@ describe('AirMapAuth#constructor', () => {
     })
 
     it('should override defaults if options are provided', () => {
+        const onAuthenticated = () => null
         const expected = {
             ...defaultOptions,
             autoLaunch: true,
-            language: 'ja'
+            language: 'ja',
+            onAuthenticated
         }
         const actual = new AirMapAuth(configMock, {
             autoLaunch: true,
-            language: 'ja'
+            language: 'ja',
+            onAuthenticated
         })
         expect(actual.options).to.deep.equal(expected)
     })

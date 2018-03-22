@@ -28,7 +28,8 @@ const defaultOptions = {
     autoLaunch: false,
     domain: 'sso.airmap.io',
     language: 'en',
-    logo: 'https://cdn.airmap.io/img/login-logo.png'
+    logo: 'https://cdn.airmap.io/img/login-logo.png',
+    onAuthenticated: (authResult) => null
 }
 
 
