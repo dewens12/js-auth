@@ -11,6 +11,12 @@ To use the AirMap Auth Module a `client_id` must be generated from the [AirMap D
 ### Sign up for an [AirMap Developer Account](https://dashboard.airmap.io/developer/)
 [https://dashboard.airmap.io/developer](https://dashboard.airmap.io/developer)
 
+## Upgrading from v1 to v2
+
+When updating the auth module from v1 to v2, note the following parameters have been deprecated:
+* closeable
+* onAuthorizationError
+* state
 
 ## Install
 
@@ -18,10 +24,10 @@ From CDN
 
 ```html
 <!-- Latest patch release -->
-<script src="https://cdn.airmap.io/js/auth/1.3.2/airmap-auth.min.js"></script>
+<script src="https://cdn.airmap.io/js/auth/2.0.0/airmap-auth.min.js"></script>
 
 <!-- Latest minor release -->
-<script src="https://cdn.airmap.io/js/auth/v1.3/index.min.js"></script>
+<script src="https://cdn.airmap.io/js/auth/v2.0/index.min.js"></script>
 ```
 
 From [bower](http://bower.io)
