@@ -1,6 +1,6 @@
 {
   "name": "airmap-auth",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Authenticate users with AirMap",
   "author": "AirMap, Inc. <developers@airmap.com> (https://airmap.com)",
   "license": "SEE LICENSE IN LICENSE.md",
