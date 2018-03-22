@@ -2,7 +2,7 @@
 
 <dl>
 <dt><a href="#module_airmap-auth">airmap-auth</a></dt>
-<dd><p>AirMap Auth0 Lock Module - JS</p>
+<dd><p>AirMap Auth0 Module Universal Login - JS</p>
 </dd>
 </dl>
 
@@ -25,7 +25,7 @@
 <a name="module_airmap-auth"></a>
 
 ## airmap-auth
-AirMap Auth0 Lock Module - JS
+AirMap Auth0 Module Universal Login - JS
 
 <a name="AirMapAuth"></a>
 
@@ -50,17 +50,15 @@ Create a new Auth Module.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| config | <code>Object</code> | AirMap Auth configuration settings can be copied and pasted from the AirMap Developer Portal |
-| config.auth0.client_id | <code>string</code> | Client ID provided by AirMap |
-| config.auth0.callback_url | <code>string</code> | Callback URL provided by AirMap |
-| options | <code>Object</code> | Optional settings for the AirMap Auth Module |
-| options.autoLaunch | <code>boolean</code> | Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false` |
-| options.closeable | <code>boolean</code> | Optional boolean will determine if the auth window can be closed when launched. Defaults to `true` |
+| config | <code>Object</code> | AirMap Auth configuration settings can be copied and pasted from the AirMap Developer Portal. |
+| config.auth0.client_id | <code>string</code> | Client ID provided by AirMap. |
+| config.auth0.callback_url | <code>string</code> | Callback URL provided by AirMap. |
+| options | <code>Object</code> | Optional settings for the AirMap Auth Module. |
+| options.autoLaunch | <code>boolean</code> | Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`. |
 | options.domain | <code>string</code> | Optional string. Defaults to `sso.airmap.io`. |
 | options.language | <code>string</code> | Optional string. Language code for UI text. Defaults to `en`. |
-| options.onAuthenticated | <code>function</code> | Optional function. Function called when Auth Module successfully authenticates the user. Parameter passed to function is the resulting Authorization object |
-| options.onAuthorizationError | <code>function</code> | Optional function. Function called when there is an error in authentication. Parameter passed to function is the resulting error object |
-| options.state | <code>string</code> | Optional string. String will be passed back with the Authorization object as 'state' on a successful authentication |
+| options.logo | <code>string</code> | Optional string. Defaults to AirMap logo. |
+| options.onAuthenticated | <code>function</code> | Optional function. Function called when Auth Module successfully authenticates the user. Parameter passed to function is the resulting Authorization object. |
 
 <a name="AirMapAuth+showAuth"></a>
 
