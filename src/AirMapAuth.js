@@ -17,6 +17,7 @@ class AirMapAuth {
       * @param {string} options.domain Optional string. Defaults to `sso.airmap.io`.
       * @param {string} options.language Optional string. Language code for UI text. Defaults to `en`.
       * @param {string} options.logo Optional string. Defaults to AirMap logo.
+      * @param {function} options.onAuthenticated Optional function. Function called when Auth Module successfully authenticates the user. Parameter passed to function is the resulting Authorization object.
       * @returns {AirMapAuth}
       */
     constructor(config, opts = {}) {
@@ -100,6 +101,7 @@ class AirMapAuth {
     _setSession(authResult) {
         localStorage.setItem(this._tokenName, authResult.idToken)
         this._userId = authResult.idTokenPayload.sub
+        this.opts.onAuthenticated(authResult)
     }
 
     /**
@@ -118,7 +120,6 @@ class AirMapAuth {
             }
         }
         const authErr = new AuthorizationError(err.error_description.type)
-        alert(`${authErr.getText(this.opts.language)}`)
     }
 
     /**
