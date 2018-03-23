@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/airmap/js-auth/compare/v1.5.2...v2.0.0) (2018-03-23)
+
+
+### Bug Fixes
+
+* Add default onAuthenticated settings ([e532e0c](https://github.com/airmap/js-auth/commit/e532e0c))
+* Add onAuthenticated option ([3baf9ac](https://github.com/airmap/js-auth/commit/3baf9ac))
+* Add tests for onAuthenticated ([7254bbb](https://github.com/airmap/js-auth/commit/7254bbb))
+
+
+### Features
+
+* Refactored placement of optional parameters ([bbcc82d](https://github.com/airmap/js-auth/commit/bbcc82d))
+* Remove onAuthenticated, onAuthorizationError and state parameters ([6ba295e](https://github.com/airmap/js-auth/commit/6ba295e))
+* Switch from Auth0 Lock to Universal Login ([b51d866](https://github.com/airmap/js-auth/commit/b51d866))
+* Update tests ([d26f97a](https://github.com/airmap/js-auth/commit/d26f97a))
+
+
+
 <a name="1.6.1"></a>
 ## [1.6.1](https://github.com/airmap/js-auth/compare/v1.6.0...v1.6.1) (2018-03-22)
 

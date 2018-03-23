@@ -1,6 +1,6 @@
 {
   "name": "airmap-auth",
-  "version": "1.6.1",
+  "version": "2.0.0",
   "description": "Authenticate users with AirMap",
   "author": "AirMap, Inc. <developers@airmap.com> (https://airmap.com)",
   "license": "SEE LICENSE IN LICENSE.md",
@@ -55,7 +55,7 @@
     "mocha-junit-reporter": "^1.12.0",
     "sinon": "^1.17.5",
     "sinon-chai": "^2.8.0",
-    "standard-version": "^2.4.0",
+    "standard-version": "^4.2.0",
     "uglify-js": "^2.7.1"
   }
 }
