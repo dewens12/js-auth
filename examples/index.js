@@ -3,18 +3,16 @@ const AirMapAuth = require('../src')
 
 // Set up the config and options objects
 // config is an object provided to the the AirMapAuth constructor
+const config = {
+    // config settings from AirMap Developer Dashboard
+}
 // client_id: from the AirMap Developer Portal (https://dashboard.airmap.io/developer)
 // callback_url: your callback url needs to be saved on the AirMap Developer Portal (https://dashboard.airmap.io/developer)
-// const config = {
-//     // config settings from AirMap Developer Dashboard
-// }
 // autoLaunch: Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`.
-// logo: Optional string. Defaults to AirMap logo.
 // language: Optional string. Language code for UI text. Defaults to `en`.
 // Additional options for AirMap Auth Module
 const options = {
     autoLaunch: false,
-    logo: 'https://cdn.airmap.io/img/login-logo.png',
     language: 'en'
 }
 

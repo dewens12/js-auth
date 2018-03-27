@@ -16,7 +16,6 @@ class AirMapAuth {
       * @param {boolean} options.autoLaunch Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`.
       * @param {string} options.domain Optional string. Defaults to `sso.airmap.io`.
       * @param {string} options.language Optional string. Language code for UI text. Defaults to `en`.
-      * @param {string} options.logo Optional string. Defaults to AirMap logo.
       * @param {function} options.onAuthenticated Optional function. Function called when Auth Module successfully authenticates the user. Parameter passed to function is the resulting Authorization object.
       * @returns {AirMapAuth}
       */
@@ -205,7 +204,7 @@ AirMapAuth.defaults = {
     autoLaunch: false,
     domain: 'sso.airmap.io',
     language: 'en',
-    logo: 'https://cdn.airmap.io/img/login-logo.png',
+    logo: 'us',
     onAuthenticated: (authResult) => null
 }
 

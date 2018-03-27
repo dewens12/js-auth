@@ -57,7 +57,6 @@ Create a new Auth Module.
 | options.autoLaunch | <code>boolean</code> | Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`. |
 | options.domain | <code>string</code> | Optional string. Defaults to `sso.airmap.io`. |
 | options.language | <code>string</code> | Optional string. Language code for UI text. Defaults to `en`. |
-| options.logo | <code>string</code> | Optional string. Defaults to AirMap logo. |
 | options.onAuthenticated | <code>function</code> | Optional function. Function called when Auth Module successfully authenticates the user. Parameter passed to function is the resulting Authorization object. |
 
 <a name="AirMapAuth+showAuth"></a>
