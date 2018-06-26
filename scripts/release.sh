@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # build the docs
 npm run docs
