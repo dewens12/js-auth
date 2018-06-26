@@ -81,12 +81,11 @@ class AirMapAuth {
      *  @return {void}
      */
     _handleAuthentication() {
-        const _this = this
-        this._webAuth.parseHash(function(err, authResult) {
+        this._webAuth.parseHash((err, authResult) => {
             if (authResult && authResult.idToken) {
-                _this._setSession(authResult)
+                this._setSession(authResult)
             } else if (err) {
-                _this._setError(err)
+                this._setError(err)
             }
         })
     }
@@ -111,14 +110,27 @@ class AirMapAuth {
      */
     _setError(error) {
         this.logout()
+        let description
+        try {
+            description = JSON.parse(error.errorDescription)
+        } catch (e) {
+            description = {}
+        }
         const err = {
             ...error,
             error_description: {
                 type: '',
-                ...[error.errorDescription]
+                ...description
             }
         }
         const authErr = new AuthorizationError(err.error_description.type)
+        // Redirecting errors to hosted login is a workaround until there's a
+        // resolution for auth0/lock#637 and auth0/lock#692
+        this._webAuth.authorize({
+            language: thisopts.language,
+            logo: this.opts.logo,
+            flash_message: authErr.getText(this.opts.language)
+        })
     }
 
     /**
