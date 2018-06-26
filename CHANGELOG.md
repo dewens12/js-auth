@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.2"></a>
+## [2.0.2](https://github.com/airmap/js-auth/compare/v2.0.1...v2.0.2) (2018-06-26)
+
+
+### Bug Fixes
+
+* Handle errors using hosted login. ([b38540e](https://github.com/airmap/js-auth/commit/b38540e))
+* Update vulnerable dependencies. ([6dca9d7](https://github.com/airmap/js-auth/commit/6dca9d7))
+
+
+
 <a name="2.0.1"></a>
 ## [2.0.1](https://github.com/airmap/js-auth/compare/v2.0.0...v2.0.1) (2018-05-22)
 

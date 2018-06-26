@@ -127,7 +127,7 @@ class AirMapAuth {
         // Redirecting errors to hosted login is a workaround until there's a
         // resolution for auth0/lock#637 and auth0/lock#692
         this._webAuth.authorize({
-            language: thisopts.language,
+            language: this.opts.language,
             logo: this.opts.logo,
             flash_message: authErr.getText(this.opts.language)
         })
