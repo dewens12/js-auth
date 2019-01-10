@@ -1,4 +1,4 @@
-const auth0 = require('auth0-js')
+const oidc = require('oidc-client')
 const jwt = require('jsonwebtoken')
 const { AuthorizationError, BadConfigError } = require('./error')
 const { supportsLocalStorage } = require('./utilities.js')
@@ -20,7 +20,7 @@ class AirMapAuth {
       * @returns {AirMapAuth}
       */
     constructor(config, opts = {}) {
-        // Checks for Auth0 Config Variables
+        // Checks for oidc Config Variables
         if (!config || typeof config.auth0 === 'undefined') {
             throw new BadConfigError('auth0')
         }
@@ -36,17 +36,20 @@ class AirMapAuth {
         this._clientId = config.auth0.client_id
         this._callbackUrl = config.auth0.callback_url
         this._tokenName = 'AirMapUserToken'
-        this._domain = this.opts.domain
+        this._authority = 'https://' + this.opts.domain + '/realms/' + this.opts.realm + '/.well-known/openid-configuration'
         this._userId = null
-        this._authParams = {
-            domain: this._domain,
-            clientID: this._clientId,
-            redirectUri: this._callbackUrl,
-            redirect: true,
-            responseType: 'token'
+        this._logoutUrl = 'https://' + this.opts.domain + '/realms/' + this.opts.realm + '/protocol/openid-connect/logout'
+        this._state = Math.random().toString(36).substr(2, 7)
+        this._settings = {
+            authority: this._authority,
+            client_id: this._clientId,
+            redirect_uri: this._callbackUrl,
+            response_type: 'id_token token',
+            scope: 'openid airmap-api profile email',
+            ui_locales: this.opts.language
         }
 
-        this._webAuth = new auth0.WebAuth(this._authParams)
+        this._client  = new oidc.OidcClient(this._settings)
         this._initAuth()
     }
 
@@ -81,13 +84,20 @@ class AirMapAuth {
      *  @return {void}
      */
     _handleAuthentication() {
-        this._webAuth.parseHash((err, authResult) => {
-            if (authResult && authResult.idToken) {
-                this._setSession(authResult)
-            } else if (err) {
-                this._setError(err)
-            }
-        })
+
+      console.log('_handleAuthentication')
+
+       if(!this._hasIdToken()) {
+          return
+       }
+
+      this._client.processSigninResponse()
+      .then((response) => {
+        console.log("signin response", response);
+        this._setSession(response)
+      }).catch((err) => {
+          this._setError(err) 
+      })
     }
 
     /**
@@ -97,9 +107,16 @@ class AirMapAuth {
      *  @return {void}
      */
     _setSession(authResult) {
-        localStorage.setItem(this._tokenName, authResult.idToken)
-        this._userId = authResult.idTokenPayload.sub
+        localStorage.setItem(this._tokenName, authResult.id_token)
+        this._userId = authResult.profile.sub
         this.opts.onAuthenticated(authResult)
+    }
+
+    /*
+     * Returns true if the url hash contains an id_token  
+    */
+    _hasIdToken(){
+      return (window.location.hash.indexOf('id_token') > -1)
     }
 
     /**
@@ -108,29 +125,14 @@ class AirMapAuth {
      *  @param {object} error
      *  @return {void}
      */
-    _setError(error) {
-        this.logout()
-        let description
-        try {
-            description = JSON.parse(error.errorDescription)
-        } catch (e) {
-            description = {}
+    _setError(err = 'unknown') {
+        //TODO: handle this better
+        if (window.confirm(err)) {
+            this.logout()
+        } else {
+           return
         }
-        const err = {
-            ...error,
-            error_description: {
-                type: '',
-                ...description
-            }
-        }
-        const authErr = new AuthorizationError(err.error_description.type)
-        // Redirecting errors to hosted login is a workaround until there's a
-        // resolution for auth0/lock#637 and auth0/lock#692
-        this._webAuth.authorize({
-            language: this.opts.language,
-            logo: this.opts.logo,
-            flash_message: authErr.getText(this.opts.language)
-        })
+        
     }
 
     /**
@@ -142,13 +144,16 @@ class AirMapAuth {
         // Will only show Auth Modal when user does not have a valid auth token available.
         // Also, handling race conditions by checking hash for id_token as a redirect (causing DOM loading) fires before 'authenticated' event.
         let authenticated = this.isAuthenticated()
-        if (authenticated || window.location.hash.indexOf('id_token') > -1) {
+        if (authenticated || this._hasIdToken()) {
             return
         } else {
-            this._webAuth.authorize({
-                language: this.opts.language,
-                logo: this.opts.logo
-            })
+            this._client.createSigninRequest({ state: Math.random().toString(36).substr(2, 7) }).then(function(req) {
+              console.log("signin request", req, "<a href='" + req.url + "'>go signin</a>");
+              window.location = req.url;
+
+            }).catch(function(err) {
+                console.log(err);
+            });
             return
         }
     }
@@ -196,11 +201,19 @@ class AirMapAuth {
     /**
      *  Logs out a user by removing the authenticated user token from localStorage and redirects the user (optional).
      *  @public
-     *  @param {string} logoutUrl - If a logout url is provided as a parameter, upon logging out, page will be redirected to the provided url, otherwise no redirect.
+     *  @param {string} logoutRedirectUrl - If a logoutRedirect url is provided as a parameter, upon logging out, page will be redirected to the provided url, otherwise it will redirect to the current url without the hash.
      *  @return {void}
      */
-    logout(logoutUrl = null) {
+    logout(logoutRedirectUrl = null) {
+
         if (!this.isAuthenticated()) return
+
+        var logoutUrl = this._logoutUrl + '?redirect_uri=' + window.location.toString().split('#')[0] 
+
+        if(logoutRedirectUrl){
+          logoutUrl = this._logoutUrl + '?redirect_uri=' + logoutRedirectUrl
+        }   
+
         if (logoutUrl) {
             localStorage.removeItem(this._tokenName)
             window.location.href = logoutUrl
@@ -213,12 +226,11 @@ class AirMapAuth {
 }
 
 AirMapAuth.defaults = {
-    autoLaunch: false,
-    domain: 'sso.airmap.io',
+    domain: 'auth.airmap.com',
+    autoLaunch: true,
+    realm: 'airmap',
     language: 'en',
-    logo: 'us',
     onAuthenticated: (authResult) => null
 }
-
 
 module.exports = AirMapAuth

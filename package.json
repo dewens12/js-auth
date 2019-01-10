@@ -35,8 +35,8 @@
     "test:circle": "export NODE_PATH=./ && mocha --compilers js:babel-register --recursive --reporter mocha-junit-reporter test/setup.js test/unit/* --reporter-options mochaFile=$CIRCLE_TEST_REPORTS/mocha/unit.xml"
   },
   "dependencies": {
-    "auth0-js": "^9.3.2",
-    "jsonwebtoken": "^8.2.1"
+    "jsonwebtoken": "^8.2.1",
+    "oidc-client": "^1.6.1"
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",
@@ -46,7 +46,7 @@
     "babel-register": "^6.11.6",
     "babelify": "^7.3.0",
     "browserify": "^13.1.0",
-    "budo": "^11.2.2",
+    "budo": "^11.5.0",
     "chai": "^3.5.0",
     "jsdoc": "^3.4.0",
     "jsdoc-to-markdown": "^4.0.1",

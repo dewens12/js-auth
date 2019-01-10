@@ -13,7 +13,8 @@ const config = {
 // Additional options for AirMap Auth Module
 const options = {
     autoLaunch: false,
-    language: 'en'
+    language: 'en',
+    domain: 'test.auth.airmap.com'
 }
 
 // Create an instance of AirMapAuth and provide it with some configuration settings
@@ -26,7 +27,7 @@ window.login = () => {
 
 // Calls the 'logout' method which destroys a user's authenticated session
 window.logout = () => {
-    webAuth.logout('http://localhost:8080/logout-redirect.html')
+    webAuth.logout('http://localhost:8080')
 }
 
 // Calls the 'isAuthenticated' method which checks if a user's session is authenticated
