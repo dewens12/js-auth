@@ -199,22 +199,17 @@ class AirMapAuth {
      */
     logout(logoutRedirectUrl = null) {
 
-        if (!this.isAuthenticated()) return
+        // if (!this.isAuthenticated()) return
 
-        var logoutUrl = this._logoutUrl + '?redirect_uri=' + santaizedUrl() 
+        var logoutUrl = this._logoutUrl + '?redirect_uri=' + this.santaizedUrl() 
 
         if(logoutRedirectUrl){
           logoutUrl = this._logoutUrl + '?redirect_uri=' + logoutRedirectUrl
         }   
 
-        if (logoutUrl) {
-            localStorage.removeItem(this._tokenName)
-            window.location.href = logoutUrl
-            return
-        } else {
-            localStorage.removeItem(this._tokenName)
-            return
-        }
+       localStorage.removeItem(this._tokenName)
+        window.location.href = logoutUrl
+        this.opts.onLogout()
     }
 
     // strips off hash and rediects to url
@@ -234,7 +229,8 @@ AirMapAuth.defaults = {
     realm: 'airmap',
     language: 'en',
     onAuthenticated: (authResult) => null,
-    onAuthenticaitonError: (error) => null
+    onAuthenticaitonError: (error) => null,
+    onLogout: () => null
 }
 
 module.exports = AirMapAuth

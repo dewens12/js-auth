@@ -22,6 +22,9 @@ const options = {
     onAuthenticationError: (error) => {
         console.log(error)
         webAuth.logout()
+    },
+    onLogout: () => {
+        window.alert("You are now logged out.")
     }
 }
 
