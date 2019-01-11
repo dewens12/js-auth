@@ -6,6 +6,10 @@ const AirMapAuth = require('../src')
 const config = {
     // config settings from AirMap Developer Dashboard
 }
+
+// Logout Redirect Url
+const logoutUrl = "http://airmap.test:8080/logout-redirect"
+
 // client_id: from the AirMap Developer Portal (https://dashboard.airmap.io/developer)
 // callback_url: your callback url needs to be saved on the AirMap Developer Portal (https://dashboard.airmap.io/developer)
 // autoLaunch: Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`.
@@ -27,7 +31,7 @@ window.login = () => {
 
 // Calls the 'logout' method which destroys a user's authenticated session
 window.logout = () => {
-    webAuth.logout('http://localhost:8080')
+    webAuth.logout(logoutUrl)
 }
 
 // Calls the 'isAuthenticated' method which checks if a user's session is authenticated
