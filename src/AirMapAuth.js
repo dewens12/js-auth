@@ -107,6 +107,8 @@ class AirMapAuth {
         localStorage.setItem(this._tokenName, authResult.id_token)
         this._userId = authResult.profile.sub
         this.opts.onAuthenticated(authResult)
+        this.santizeUrlRedirect()
+
     }
 
     /*
@@ -199,7 +201,7 @@ class AirMapAuth {
 
         if (!this.isAuthenticated()) return
 
-        var logoutUrl = this._logoutUrl + '?redirect_uri=' + window.location.toString().split('#')[0] 
+        var logoutUrl = this._logoutUrl + '?redirect_uri=' + santaizedUrl() 
 
         if(logoutRedirectUrl){
           logoutUrl = this._logoutUrl + '?redirect_uri=' + logoutRedirectUrl
@@ -213,6 +215,16 @@ class AirMapAuth {
             localStorage.removeItem(this._tokenName)
             return
         }
+    }
+
+    // strips off hash and rediects to url
+    santizeUrlRedirect(){
+        window.location.href = this.santaizedUrl()
+    }
+
+    // returns a santaized url without hash
+    santaizedUrl() {
+        return window.location.toString().split('#')[0]
     }
 }
 
