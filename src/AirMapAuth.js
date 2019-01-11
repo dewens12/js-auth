@@ -119,17 +119,11 @@ class AirMapAuth {
     /**
      *  Process authentication error
      *  @private
-     *  @param {object} error
+     *  @param {string} error
      *  @return {void}
      */
-    _setError(err = 'unknown') {
-        //TODO: handle this better
-        if (window.confirm(err)) {
-            this.logout()
-        } else {
-           return
-        }
-        
+    _setError(err = 'An unknown error has occurred.') { 
+        this.opts.onAuthenticaitonError(error)
     }
 
     /**
@@ -227,7 +221,8 @@ AirMapAuth.defaults = {
     autoLaunch: true,
     realm: 'airmap',
     language: 'en',
-    onAuthenticated: (authResult) => null
+    onAuthenticated: (authResult) => null,
+    onAuthenticaitonError: (error) => null
 }
 
 module.exports = AirMapAuth
