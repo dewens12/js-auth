@@ -85,15 +85,12 @@ class AirMapAuth {
      */
     _handleAuthentication() {
 
-      console.log('_handleAuthentication')
-
        if(!this._hasIdToken()) {
           return
        }
 
       this._client.processSigninResponse()
       .then((response) => {
-        console.log("signin response", response);
         this._setSession(response)
       }).catch((err) => {
           this._setError(err) 
