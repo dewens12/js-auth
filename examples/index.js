@@ -8,7 +8,7 @@ const config = {
 }
 
 // Logout Redirect Url
-const logoutUrl = "http://airmap.test:8080/logout-redirect"
+const logoutUrl = "http://airmap.test:8080"
 
 // client_id: from the AirMap Developer Portal (https://dashboard.airmap.io/developer)
 // callback_url: your callback url needs to be saved on the AirMap Developer Portal (https://dashboard.airmap.io/developer)
