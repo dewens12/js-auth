@@ -4,11 +4,15 @@ const AirMapAuth = require('../src')
 // Set up the config and options objects
 // config is an object provided to the the AirMapAuth constructor
 const config = {
-    // config settings from AirMap Developer Dashboard
+    // config settings from AirMap Developer Dashboard, example given below
+    // auth0: {
+    //     client_id: AIRMAP_CLIENT_ID,
+    //     callback_url: CALLBACK_URL
+    // }
 }
 
 // Logout Redirect Url
-const logoutUrl = "http://airmap.test:8080"
+const logoutUrl = "http://localhost:8081"
 
 // client_id: from the AirMap Developer Portal (https://dashboard.airmap.io/developer)
 // callback_url: your callback url needs to be saved on the AirMap Developer Portal (https://dashboard.airmap.io/developer)
@@ -18,7 +22,7 @@ const logoutUrl = "http://airmap.test:8080"
 const options = {
     autoLaunch: false,
     language: 'en',
-    domain: 'auth.airmap.com', 
+    domain: 'test.auth.airmap.com',
     onAuthenticationError: (error) => {
         console.log(error)
         webAuth.logout()
@@ -33,7 +37,7 @@ const webAuth = new AirMapAuth(config, options)
 
 // Calls the 'showAuth' method which launches the Auth Modal
 window.login = () => {
-    webAuth.showAuth()
+    webAuth.showAuth();
 }
 
 // Calls the 'logout' method which destroys a user's authenticated session

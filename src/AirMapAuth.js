@@ -67,7 +67,7 @@ class AirMapAuth {
             window.alert('Your web browser does not support storing settings locally. In Safari, the most common cause of this is using "Private Browsing Mode". Please try exiting Private Browsing Mode and logging in again, or using another browser.')
         }
 
-        // Process successul and failed authentication
+        // Process successful and failed authentication
         this._handleAuthentication()
 
         // // Attaching event listener for DOM load when autoLaunch is desired so that an authenticated check is made.
@@ -107,7 +107,7 @@ class AirMapAuth {
         localStorage.setItem(this._tokenName, authResult.id_token)
         this._userId = authResult.profile.sub
         this.opts.onAuthenticated(authResult)
-        this.santizeUrlRedirect()
+        this.sanitizeUrlRedirect()
 
     }
 
@@ -121,11 +121,11 @@ class AirMapAuth {
     /**
      *  Process authentication error
      *  @private
-     *  @param {string} error
+     *  @param {string} err
      *  @return {void}
      */
     _setError(err = 'An unknown error has occurred.') { 
-        this.opts.onAuthenticaitonError(error)
+        this.opts.onAuthenticationError(err)
     }
 
     /**
@@ -162,14 +162,14 @@ class AirMapAuth {
         // Checks expiration date of token.
         const decoded = jwt.decode(localStorage.getItem(this._tokenName))
         const timeStampNow = Math.floor(Date.now() / 1000)
-        return timeStampNow < decoded.exp ? true : false
+        return timeStampNow < decoded.exp
     }
 
     /**
-     *  Retreives a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.
+     *  Retrieves a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.
      *  This method can be used to retrieve the user's AirMap Id for calls to other AirMap APIs like the Pilot API, which returns a Pilot's profile.
      *  @public
-     *  @return {string} returns the user's id (if authenticated), null if profile could not be retrieved.
+     *  @return {string || null} returns the user's id (if authenticated), null if profile could not be retrieved.
      */
     getUserId() {
         // Looks for a valid token in localStorage.
@@ -182,7 +182,7 @@ class AirMapAuth {
     }
 
     /**
-     *  Retreives a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.
+     *  Retrieves a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.
      *  @public
      *  @return {string} returns the user's token (if authenticated), null if user is not authenticated (active session).
      */
@@ -194,14 +194,14 @@ class AirMapAuth {
     /**
      *  Logs out a user by removing the authenticated user token from localStorage and redirects the user (optional).
      *  @public
-     *  @param {string} logoutRedirectUrl - If a logoutRedirect url is provided as a parameter, upon logging out, page will be redirected to the provided url, otherwise it will redirect to the current url without the hash.
+     *  @param {string || null} logoutRedirectUrl - If a logoutRedirect url is provided as a parameter, upon logging out, page will be redirected to the provided url, otherwise it will redirect to the current url without the hash.
      *  @return {void}
      */
     logout(logoutRedirectUrl = null) {
 
         // if (!this.isAuthenticated()) return
 
-        var logoutUrl = this._logoutUrl + '?redirect_uri=' + this.santaizedUrl() 
+        let logoutUrl = this._logoutUrl + '?redirect_uri=' + this.sanitizedUrl()
 
         if(logoutRedirectUrl){
           logoutUrl = this._logoutUrl + '?redirect_uri=' + logoutRedirectUrl
@@ -212,13 +212,13 @@ class AirMapAuth {
         this.opts.onLogout()
     }
 
-    // strips off hash and rediects to url
-    santizeUrlRedirect(){
-        window.location.href = this.santaizedUrl()
+    // strips off hash and redirects to url
+    sanitizeUrlRedirect(){
+        window.location.href = this.sanitizedUrl()
     }
 
-    // returns a santaized url without hash
-    santaizedUrl() {
+    // returns a sanitized url without hash
+    sanitizedUrl() {
         return window.location.toString().split('#')[0]
     }
 }
@@ -229,7 +229,7 @@ AirMapAuth.defaults = {
     realm: 'airmap',
     language: 'en',
     onAuthenticated: (authResult) => null,
-    onAuthenticaitonError: (error) => null,
+    onAuthenticationError: (error) => null,
     onLogout: () => null
 }
 

@@ -77,7 +77,7 @@ Checks whether a user is authenticated, which means that they have a token store
 <a name="AirMapAuth+getUserId"></a>
 
 ### airMapAuth.getUserId() ⇒ <code>string</code>
-Retreives a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.
+Retrieves a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.
  This method can be used to retrieve the user's AirMap Id for calls to other AirMap APIs like the Pilot API, which returns a Pilot's profile.
 
 **Kind**: instance method of [<code>AirMapAuth</code>](#AirMapAuth)  
@@ -86,7 +86,7 @@ Retreives a user's id when authenticated. If no auth token exists or if it's inv
 <a name="AirMapAuth+getUserToken"></a>
 
 ### airMapAuth.getUserToken() ⇒ <code>string</code>
-Retreives a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.
+Retrieves a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.
 
 **Kind**: instance method of [<code>AirMapAuth</code>](#AirMapAuth)  
 **Returns**: <code>string</code> - returns the user's token (if authenticated), null if user is not authenticated (active session).  
