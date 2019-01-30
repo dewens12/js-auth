@@ -22,7 +22,6 @@ const logoutUrl = "http://localhost:8081"
 const options = {
     autoLaunch: false,
     language: 'en',
-    domain: 'test.auth.airmap.com',
     onAuthenticationError: (error) => {
         console.log(error)
         webAuth.logout()
