@@ -11,6 +11,12 @@ To use the AirMap Auth Module a `client_id` must be generated from the [AirMap D
 ### Sign up for an [AirMap Developer Account](https://dashboard.airmap.io/developer/)
 [https://dashboard.airmap.io/developer](https://dashboard.airmap.io/developer)
 
+## Version 3 Changes
+
+We've migrated our authentication solution from Auth0 to Keycloak. This package has been updated to reflect this change. 
+
+While there are no breaking changes to the end-user experience, it is important to upgrade as the previous version will no longer work once Auth0 is deprecated. 
+
 ## Upgrading from v1 to v2
 
 When updating the auth module from v1 to v2, note the following parameters have been deprecated:
@@ -24,10 +30,10 @@ From CDN
 
 ```html
 <!-- Latest patch release -->
-<script src="https://cdn.airmap.io/js/auth/2.0.0/airmap-auth.min.js"></script>
+<script src="https://cdn.airmap.io/js/auth/3.0.0/airmap-auth.min.js"></script>
 
 <!-- Latest minor release -->
-<script src="https://cdn.airmap.io/js/auth/v2.0/index.min.js"></script>
+<script src="https://cdn.airmap.io/js/auth/v3.0/index.min.js"></script>
 ```
 
 From [bower](http://bower.io)
