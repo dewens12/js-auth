@@ -1,4 +1,4 @@
-const auth0 = require('auth0-js')
+const oidc = require('oidc-client')
 const jwt = require('jsonwebtoken')
 const { AuthorizationError, BadConfigError } = require('./error')
 const { supportsLocalStorage } = require('./utilities.js')
@@ -20,7 +20,7 @@ class AirMapAuth {
       * @returns {AirMapAuth}
       */
     constructor(config, opts = {}) {
-        // Checks for Auth0 Config Variables
+        // Checks for oidc Config Variables
         if (!config || typeof config.auth0 === 'undefined') {
             throw new BadConfigError('auth0')
         }
@@ -36,17 +36,20 @@ class AirMapAuth {
         this._clientId = config.auth0.client_id
         this._callbackUrl = config.auth0.callback_url
         this._tokenName = 'AirMapUserToken'
-        this._domain = this.opts.domain
+        this._authority = 'https://' + this.opts.domain + '/realms/' + this.opts.realm + '/.well-known/openid-configuration'
         this._userId = null
-        this._authParams = {
-            domain: this._domain,
-            clientID: this._clientId,
-            redirectUri: this._callbackUrl,
-            redirect: true,
-            responseType: 'token'
+        this._logoutUrl = 'https://' + this.opts.domain + '/realms/' + this.opts.realm + '/protocol/openid-connect/logout'
+        this._state = Math.random().toString(36).substr(2, 7)
+        this._settings = {
+            authority: this._authority,
+            client_id: this._clientId,
+            redirect_uri: this._callbackUrl,
+            response_type: 'id_token token',
+            scope: 'openid airmap-api profile email',
+            ui_locales: this.opts.language
         }
 
-        this._webAuth = new auth0.WebAuth(this._authParams)
+        this._client  = new oidc.OidcClient(this._settings)
         this._initAuth()
     }
 
@@ -64,7 +67,7 @@ class AirMapAuth {
             window.alert('Your web browser does not support storing settings locally. In Safari, the most common cause of this is using "Private Browsing Mode". Please try exiting Private Browsing Mode and logging in again, or using another browser.')
         }
 
-        // Process successul and failed authentication
+        // Process successful and failed authentication
         this._handleAuthentication()
 
         // // Attaching event listener for DOM load when autoLaunch is desired so that an authenticated check is made.
@@ -81,13 +84,17 @@ class AirMapAuth {
      *  @return {void}
      */
     _handleAuthentication() {
-        this._webAuth.parseHash((err, authResult) => {
-            if (authResult && authResult.idToken) {
-                this._setSession(authResult)
-            } else if (err) {
-                this._setError(err)
-            }
-        })
+
+       if(!this._hasIdToken()) {
+          return
+       }
+
+      this._client.processSigninResponse()
+      .then((response) => {
+        this._setSession(response)
+      }).catch((err) => {
+          this._setError(err) 
+      })
     }
 
     /**
@@ -97,40 +104,28 @@ class AirMapAuth {
      *  @return {void}
      */
     _setSession(authResult) {
-        localStorage.setItem(this._tokenName, authResult.idToken)
-        this._userId = authResult.idTokenPayload.sub
+        localStorage.setItem(this._tokenName, authResult.id_token)
+        this._userId = authResult.profile.sub
         this.opts.onAuthenticated(authResult)
+        this.sanitizeUrlRedirect()
+
+    }
+
+    /*
+     * Returns true if the url hash contains an id_token  
+    */
+    _hasIdToken(){
+      return (window.location.hash.indexOf('id_token') > -1)
     }
 
     /**
      *  Process authentication error
      *  @private
-     *  @param {object} error
+     *  @param {string} err
      *  @return {void}
      */
-    _setError(error) {
-        this.logout()
-        let description
-        try {
-            description = JSON.parse(error.errorDescription)
-        } catch (e) {
-            description = {}
-        }
-        const err = {
-            ...error,
-            error_description: {
-                type: '',
-                ...description
-            }
-        }
-        const authErr = new AuthorizationError(err.error_description.type)
-        // Redirecting errors to hosted login is a workaround until there's a
-        // resolution for auth0/lock#637 and auth0/lock#692
-        this._webAuth.authorize({
-            language: this.opts.language,
-            logo: this.opts.logo,
-            flash_message: authErr.getText(this.opts.language)
-        })
+    _setError(err = 'An unknown error has occurred.') { 
+        this.opts.onAuthenticationError(err)
     }
 
     /**
@@ -142,13 +137,16 @@ class AirMapAuth {
         // Will only show Auth Modal when user does not have a valid auth token available.
         // Also, handling race conditions by checking hash for id_token as a redirect (causing DOM loading) fires before 'authenticated' event.
         let authenticated = this.isAuthenticated()
-        if (authenticated || window.location.hash.indexOf('id_token') > -1) {
+        if (authenticated || this._hasIdToken()) {
             return
         } else {
-            this._webAuth.authorize({
-                language: this.opts.language,
-                logo: this.opts.logo
-            })
+            this._client.createSigninRequest({ state: Math.random().toString(36).substr(2, 7) }).then(function(req) {
+              console.log("signin request", req, "<a href='" + req.url + "'>go signin</a>");
+              window.location = req.url;
+
+            }).catch(function(err) {
+                console.log(err);
+            });
             return
         }
     }
@@ -164,14 +162,14 @@ class AirMapAuth {
         // Checks expiration date of token.
         const decoded = jwt.decode(localStorage.getItem(this._tokenName))
         const timeStampNow = Math.floor(Date.now() / 1000)
-        return timeStampNow < decoded.exp ? true : false
+        return timeStampNow < decoded.exp
     }
 
     /**
-     *  Retreives a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.
+     *  Retrieves a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.
      *  This method can be used to retrieve the user's AirMap Id for calls to other AirMap APIs like the Pilot API, which returns a Pilot's profile.
      *  @public
-     *  @return {string} returns the user's id (if authenticated), null if profile could not be retrieved.
+     *  @return {string || null} returns the user's id (if authenticated), null if profile could not be retrieved.
      */
     getUserId() {
         // Looks for a valid token in localStorage.
@@ -184,7 +182,7 @@ class AirMapAuth {
     }
 
     /**
-     *  Retreives a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.
+     *  Retrieves a user's id when authenticated. If no auth token exists or if it's invalid, the return value will be null.
      *  @public
      *  @return {string} returns the user's token (if authenticated), null if user is not authenticated (active session).
      */
@@ -196,29 +194,43 @@ class AirMapAuth {
     /**
      *  Logs out a user by removing the authenticated user token from localStorage and redirects the user (optional).
      *  @public
-     *  @param {string} logoutUrl - If a logout url is provided as a parameter, upon logging out, page will be redirected to the provided url, otherwise no redirect.
+     *  @param {string || null} logoutRedirectUrl - If a logoutRedirect url is provided as a parameter, upon logging out, page will be redirected to the provided url, otherwise it will redirect to the current url without the hash.
      *  @return {void}
      */
-    logout(logoutUrl = null) {
-        if (!this.isAuthenticated()) return
-        if (logoutUrl) {
-            localStorage.removeItem(this._tokenName)
-            window.location.href = logoutUrl
-            return
-        } else {
-            localStorage.removeItem(this._tokenName)
-            return
-        }
+    logout(logoutRedirectUrl = null) {
+
+        // if (!this.isAuthenticated()) return
+
+        let logoutUrl = this._logoutUrl + '?redirect_uri=' + this.sanitizedUrl()
+
+        if(logoutRedirectUrl){
+          logoutUrl = this._logoutUrl + '?redirect_uri=' + logoutRedirectUrl
+        }   
+
+       localStorage.removeItem(this._tokenName)
+        window.location.href = logoutUrl
+        this.opts.onLogout()
+    }
+
+    // strips off hash and redirects to url
+    sanitizeUrlRedirect(){
+        window.location.href = this.sanitizedUrl()
+    }
+
+    // returns a sanitized url without hash
+    sanitizedUrl() {
+        return window.location.toString().split('#')[0]
     }
 }
 
 AirMapAuth.defaults = {
-    autoLaunch: false,
-    domain: 'sso.airmap.io',
+    domain: 'auth.airmap.com',
+    autoLaunch: true,
+    realm: 'airmap',
     language: 'en',
-    logo: 'us',
-    onAuthenticated: (authResult) => null
+    onAuthenticated: (authResult) => null,
+    onAuthenticationError: (error) => null,
+    onLogout: () => null
 }
-
 
 module.exports = AirMapAuth

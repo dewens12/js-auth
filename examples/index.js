@@ -4,8 +4,16 @@ const AirMapAuth = require('../src')
 // Set up the config and options objects
 // config is an object provided to the the AirMapAuth constructor
 const config = {
-    // config settings from AirMap Developer Dashboard
+    // config settings from AirMap Developer Dashboard, example given below
+    // auth0: {
+    //     client_id: AIRMAP_CLIENT_ID,
+    //     callback_url: CALLBACK_URL
+    // }
 }
+
+// Logout Redirect Url
+const logoutUrl = "http://localhost:8081"
+
 // client_id: from the AirMap Developer Portal (https://dashboard.airmap.io/developer)
 // callback_url: your callback url needs to be saved on the AirMap Developer Portal (https://dashboard.airmap.io/developer)
 // autoLaunch: Optional boolean. Will check on pageload if user is authenticated. If not authenticated, the auth window will launch. Defaults to `false`.
@@ -13,7 +21,14 @@ const config = {
 // Additional options for AirMap Auth Module
 const options = {
     autoLaunch: false,
-    language: 'en'
+    language: 'en',
+    onAuthenticationError: (error) => {
+        console.log(error)
+        webAuth.logout()
+    },
+    onLogout: () => {
+        window.alert("You are now logged out.")
+    }
 }
 
 // Create an instance of AirMapAuth and provide it with some configuration settings
@@ -21,12 +36,12 @@ const webAuth = new AirMapAuth(config, options)
 
 // Calls the 'showAuth' method which launches the Auth Modal
 window.login = () => {
-    webAuth.showAuth()
+    webAuth.showAuth();
 }
 
 // Calls the 'logout' method which destroys a user's authenticated session
 window.logout = () => {
-    webAuth.logout('http://localhost:8080/logout-redirect.html')
+    webAuth.logout(logoutUrl)
 }
 
 // Calls the 'isAuthenticated' method which checks if a user's session is authenticated

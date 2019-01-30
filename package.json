@@ -1,6 +1,6 @@
 {
   "name": "airmap-auth",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "Authenticate users with AirMap",
   "author": "AirMap, Inc. <developers@airmap.com> (https://airmap.com)",
   "license": "SEE LICENSE IN LICENSE.md",
@@ -30,13 +30,13 @@
     "prepublish": "npm run build-prod",
     "standard-version": "standard-version",
     "release": "sh ./scripts/release.sh",
-    "start": "budo ./examples/index.js --serve=examples/bundle.js --port=8080 --live --cors --dir=examples -- -t babelify",
+    "start": "budo examples/index.js:examples/bundle.js --port=8081 --live --cors --dir=examples -- -t babelify",
     "test": "export NODE_PATH=./ && mocha --compilers js:babel-register --recursive test/setup.js test/unit/*",
     "test:circle": "export NODE_PATH=./ && mocha --compilers js:babel-register --recursive --reporter mocha-junit-reporter test/setup.js test/unit/* --reporter-options mochaFile=$CIRCLE_TEST_REPORTS/mocha/unit.xml"
   },
   "dependencies": {
-    "auth0-js": "^9.3.2",
-    "jsonwebtoken": "^8.2.1"
+    "jsonwebtoken": "^8.2.1",
+    "oidc-client": "^1.6.1"
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",
@@ -46,7 +46,7 @@
     "babel-register": "^6.11.6",
     "babelify": "^7.3.0",
     "browserify": "^13.1.0",
-    "budo": "^11.2.2",
+    "budo": "^11.5.0",
     "chai": "^3.5.0",
     "jsdoc": "^3.4.0",
     "jsdoc-to-markdown": "^4.0.1",
