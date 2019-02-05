@@ -1,6 +1,6 @@
 {
   "name": "airmap-auth",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Authenticate users with AirMap",
   "author": "AirMap, Inc. <developers@airmap.com> (https://airmap.com)",
   "license": "SEE LICENSE IN LICENSE.md",
@@ -35,7 +35,7 @@
     "test:circle": "export NODE_PATH=./ && mocha --compilers js:babel-register --recursive --reporter mocha-junit-reporter test/setup.js test/unit/* --reporter-options mochaFile=$CIRCLE_TEST_REPORTS/mocha/unit.xml"
   },
   "dependencies": {
-    "jsonwebtoken": "^8.2.1",
+    "jwt-decode": "^2.2.0",
     "oidc-client": "^1.6.1"
   },
   "devDependencies": {
