@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 3.0.2
+Switched JWT decode packages.
+
+<a name="3.0.1"></a>
+## [3.0.1](https://www.npmjs.com/package/airmap-auth/v/3.0.1) (2019-02-05)
+We changed our SSO provider. This package has been updated to reflect that change
+
+
 <a name="2.0.2"></a>
 ## [2.0.2](https://github.com/airmap/js-auth/compare/v2.0.1...v2.0.2) (2018-06-26)
 
