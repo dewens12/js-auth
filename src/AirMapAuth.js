@@ -1,5 +1,5 @@
 const oidc = require('oidc-client')
-const jwt = require('jsonwebtoken')
+var jwtDecode = require('jwt-decode');
 const { AuthorizationError, BadConfigError } = require('./error')
 const { supportsLocalStorage } = require('./utilities.js')
 
@@ -160,7 +160,7 @@ class AirMapAuth {
         // Will only show Auth Modal when user does not have an auth token available.
         if (!localStorage.getItem(this._tokenName)) return false
         // Checks expiration date of token.
-        const decoded = jwt.decode(localStorage.getItem(this._tokenName))
+        const decoded = jwtDecode(localStorage.getItem(this._tokenName))
         const timeStampNow = Math.floor(Date.now() / 1000)
         return timeStampNow < decoded.exp
     }
@@ -177,7 +177,7 @@ class AirMapAuth {
         if (!authenticated) {
             return null
         } else {
-            return jwt.decode(localStorage.getItem(this._tokenName)).sub
+            return jwtDecode(localStorage.getItem(this._tokenName)).sub
         }
     }
 
